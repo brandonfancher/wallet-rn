@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 import Mnemonic from './src/lib/jsbip39';
 
@@ -15,6 +15,8 @@ export default class App extends React.Component {
   state = {
     blocks: [],
     mnemonic: null,
+    userMnemonic: '',
+    userMnemonicIsValid: null,
   };
 
   constructor() {
@@ -38,16 +40,54 @@ export default class App extends React.Component {
     this.setState({ mnemonic: words });
   }
 
+  validateUserMnemonic = () => {
+    const { userMnemonic } = this.state;
+    const m = new Mnemonic();
+    this.setState({ userMnemonicIsValid: m.check(userMnemonic)});
+  }
+
+  generateSeed = () => {
+    const { userMnemonic } = this.state;
+    const m = new Mnemonic();
+    this.setState({ userSeed: m.toSeed(userMnemonic) });
+  }
+
   render() {
-    const { mnemonic } = this.state;
+    const { mnemonic, userMnemonic, userMnemonicIsValid, userSeed } = this.state;
+    const buttonStyle = { padding: 5, borderColor: 'gray', borderWidth: 1, backgroundColor: '#CCC', borderRadius: 3 };
+
+    const valid = () => {
+      if (userMnemonicIsValid) {
+        return <Text>YES</Text>;
+      } else if (userMnemonicIsValid === false) {
+        return <Text>NO</Text>;
+      }
+    }
+
     return (
       <View style={styles.container}>
-        <Text>Block Go Here</Text>
-        {this.state.blocks.map((block, i) => <Text key={`block-${block.hash}`}>{block.hash}</Text>)}
-        <TouchableOpacity onPress={this.generateMnemonic}>
+        {/* <Text>Block Go Here</Text>
+        {this.state.blocks.map((block, i) => <Text key={`block-${block.hash}`}>{block.hash}</Text>)} */}
+        <TouchableOpacity onPress={this.generateMnemonic} style={buttonStyle}>
           <Text>Generate Mnemonic</Text>
         </TouchableOpacity>
         {mnemonic && <Text>{mnemonic.toString()}</Text>}
+        <TextInput
+          style={{height: 40, borderColor: 'gray', borderWidth: 1}}
+          onChangeText={(userMnemonic) => this.setState({ userMnemonic })}
+          value={userMnemonic}
+        />
+        <Text>{userMnemonic}</Text>
+
+        <TouchableOpacity onPress={this.generateSeed} style={buttonStyle}>
+          <Text>Generate BIP39 Seed</Text>
+        </TouchableOpacity>
+        <Text>{userSeed}</Text>
+
+        <TouchableOpacity onPress={this.validateUserMnemonic} style={buttonStyle}>
+          <Text>Is Valid?</Text>
+        </TouchableOpacity>
+        <Text>{valid()}</Text>
       </View>
     );
   }
@@ -58,6 +98,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
     alignItems: 'center',
-    justifyContent: 'center',
+    marginTop: 64,
+    // justifyContent: 'center',
   },
 });
