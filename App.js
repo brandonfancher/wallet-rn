@@ -3,11 +3,11 @@ import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-nativ
 
 import Mnemonic from './src/lib/jsbip39';
 
-import io from 'socket.io-client';
-import feathers from 'feathers/client'
-import hooks from 'feathers-hooks';
-import socketio from 'feathers-socketio/client'
-const API_URL = 'http://localhost:3030';
+// import io from 'socket.io-client';
+// import feathers from 'feathers/client'
+// import hooks from 'feathers-hooks';
+// import socketio from 'feathers-socketio/client'
+// const API_URL = 'http://localhost:3030';
 
 
 export default class App extends React.Component {
@@ -19,20 +19,20 @@ export default class App extends React.Component {
     userMnemonicIsValid: null,
   };
 
-  constructor() {
-    super();
-    const options = { transports: ['websocket'], pingTimeout: 3000, pingInterval: 5000 };
-    const socket = io(API_URL, options);
-
-    this.app = feathers()
-      .configure(socketio(socket))
-      .configure(hooks());
-
-    this.app.service('block').on('created', newBlock => {
-      console.log(newBlock);
-      this.setState({ blocks: [...this.state.blocks, newBlock] })
-    });
-  }
+  // constructor() {
+  //   super();
+  //   const options = { transports: ['websocket'], pingTimeout: 3000, pingInterval: 5000 };
+  //   const socket = io(API_URL, options);
+  //
+  //   this.app = feathers()
+  //     .configure(socketio(socket))
+  //     .configure(hooks());
+  //
+  //   this.app.service('block').on('created', newBlock => {
+  //     console.log(newBlock);
+  //     this.setState({ blocks: [...this.state.blocks, newBlock] })
+  //   });
+  // }
 
   generateMnemonic = () => {
     const m = new Mnemonic();
@@ -50,6 +50,12 @@ export default class App extends React.Component {
     const { userMnemonic } = this.state;
     const m = new Mnemonic();
     this.setState({ userSeed: m.toSeed(userMnemonic) });
+  }
+
+  fillInSeed = () => {
+    const { mnemonic } = this.state;
+    const newMnemonic = mnemonic.toString();
+    this.setState({ userMnemonic: newMnemonic });
   }
 
   render() {
@@ -71,13 +77,16 @@ export default class App extends React.Component {
         <TouchableOpacity onPress={this.generateMnemonic} style={buttonStyle}>
           <Text>Generate Mnemonic</Text>
         </TouchableOpacity>
-        {mnemonic && <Text>{mnemonic.toString()}</Text>}
+        {mnemonic &&
+          <TouchableOpacity onPress={this.fillInSeed}>
+            <Text>{mnemonic.toString()}</Text>
+          </TouchableOpacity>
+        }
         <TextInput
           style={{height: 40, borderColor: 'gray', borderWidth: 1}}
           onChangeText={(userMnemonic) => this.setState({ userMnemonic })}
           value={userMnemonic}
         />
-        <Text>{userMnemonic}</Text>
 
         <TouchableOpacity onPress={this.generateSeed} style={buttonStyle}>
           <Text>Generate BIP39 Seed</Text>

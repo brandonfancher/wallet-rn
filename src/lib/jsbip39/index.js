@@ -30,7 +30,9 @@
  * ES2015 Class port by Brandon Fancher
  */
 
-import sjcl from './sjcl-bip39';
+import { randomBytes } from 'react-native-randombytes';
+import sjcl from 'sjcl';
+const crypto = require('crypto');
 import WORDLISTS from './wordlists';
 
 const PBKDF2_ROUNDS = 2048;
@@ -84,8 +86,7 @@ function binaryStringToWordArray(binary) {
   return a;
 }
 
-// Pad a numeric string on the left with zero digits until the given width
-// is reached.
+// Pad a numeric string on the left with zero digits until the given width is reached.
 // Note this differs to the python implementation because it does not
 // handle numbers starting with a sign.
 function zfill(source, length) {
@@ -114,12 +115,17 @@ export default class Mnemonic {
     if (r > 0) {
       throw 'Strength should be divisible by 32, but it is not (' + r + ').';
     }
+
+    // NOTE: When running in dev mode, crypto may get supplied by browser V8. Beware.
     var hasStrongCrypto = 'crypto' in window && window['crypto'] !== null;
     if (!hasStrongCrypto) {
       throw 'Mnemonic should be generated with strong randomness, but crypto.getRandomValues is unavailable';
     }
-    var buffer = new Uint8Array(strength / 8);
-    var data = crypto.getRandomValues(buffer);
+    // NOTE: I overrode the following with randomBytes
+    // var buffer = new Uint8Array(strength / 8);
+    // var data = crypto.getRandomValues(buffer);
+
+    const data = randomBytes(strength / 8);
     return this.toMnemonic(data);
   }
 
@@ -134,7 +140,7 @@ export default class Mnemonic {
     var h = sjcl.codec.hex.fromBits(hash);
 
     // b is a binary string, eg '00111010101100...'
-    //b = bin(int(binascii.hexlify(data), 16))[2:].zfill(len(data) * 8) + \
+    // b = bin(int(binascii.hexlify(data), 16))[2:].zfill(len(data) * 8) + \
     //    bin(int(h, 16))[2:].zfill(256)[:len(data) * 8 / 32]
     //
     // a = bin(int(binascii.hexlify(data), 16))[2:].zfill(len(data) * 8)
