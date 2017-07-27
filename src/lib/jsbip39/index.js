@@ -30,9 +30,7 @@
  * ES2015 Class port by Brandon Fancher
  */
 
-import { randomBytes } from 'react-native-randombytes';
 import sjcl from 'sjcl';
-const crypto = require('crypto');
 import WORDLISTS from './wordlists';
 
 const PBKDF2_ROUNDS = 2048;
@@ -121,11 +119,10 @@ export default class Mnemonic {
     if (!hasStrongCrypto) {
       throw 'Mnemonic should be generated with strong randomness, but crypto.getRandomValues is unavailable';
     }
-    // NOTE: I overrode the following with randomBytes
-    // var buffer = new Uint8Array(strength / 8);
-    // var data = crypto.getRandomValues(buffer);
 
-    const data = randomBytes(strength / 8);
+    var buffer = new Uint8Array(strength / 8);
+    var data = crypto.getRandomValues(buffer);
+
     return this.toMnemonic(data);
   }
 
