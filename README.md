@@ -1,3 +1,37 @@
+# wallet-rn
+
+## Polyfills and Resources Re: Crypto Libraries.
+
+Several of the libraries that will be used in this application rely on `crypto` and other libraries that are usually bundled with Node but which are missing from the React Native environment. Those missing libraries must be shimmed with something like browserify and similar tools. One method for including such shims is [React Nativify](https://github.com/philikon/ReactNativify), which relies on [babel-plugin-rewrite-require](https://www.npmjs.com/package/babel-plugin-rewrite-require) to point existing `require` or `import` scripts to the shimmed packages.
+
+### React Nativify
+
+#### Chrome Debugger
+* One side effect seems to be decreased Chrome debugger load times: https://github.com/philikon/ReactNativify/issues/7
+* Keep in mind that using Chrome debugger makes React Native rely on Chrome's V8 engine instead of React Native's engine. So while testing, be careful to ensure that `crypto` and other libraries are using the installed shims and not those supplied by V8.
+
+#### Other Considerations
+* Newer versions of React Native (v0.43.3+) seem to have trouble with the transformer: `transformer.transform is not a function`. This issue addresses that: https://github.com/philikon/ReactNativify/issues/6. I structured the transformer code in this project similarly to _wswoodruff_'s solutions: https://github.com/philikon/ReactNativify/issues/6#issuecomment-306072846.
+* The alternative to the React Nativify method is [rn-nodeify](https://github.com/mvayngrib/rn-nodeify/), but that's messy and scary.
+* [node-libs-browser](https://github.com/webpack/node-libs-browser) should be installed to provide many of the basic node functions.
+
+#### crypto
+* There are several libraries that attempt to shim `crypto`: [react-native-crypto](https://github.com/mvayngrib/react-native-crypto) (a clone of [crypto-browserify](https://github.com/crypto-browserify/crypto-browserify) with `randomBytes` replaced) and [native-crypto](https://github.com/calvinmetcalf/native-crypto). I opted for the former. Haven't tried the latter yet.
+* **pbkdf2** _wswoodruff_ mentions a fix for the `crypto.pbkdf2Sync.toString` error...a shim, which I installed from the supplied git repo: https://github.com/mvayngrib/react-native-crypto/issues/14#issuecomment-306072211. This may not actually fix it, though. If problems remain, look at the following comments on that thread.
+* `react-native-crypto` relies on [react-native-randombytes](https://github.com/mvayngrib/react-native-randombytes) for random byte generation, which in turn relies on [SJCL (Standford Javascript Crypto Library)](https://github.com/bitwiseshiftleft/sjcl/) for synchronous generation and iOS's `SecRandomCopyBytes` for asynchronous generation. `react-native-randombytes` recommends linking with `rnpm link`, however that is not currently working. The Manual method must be used. Furthermore, two files must be manually modified in Xcode for newer versions of React Native: https://github.com/mvayngrib/react-native-randombytes/pull/15. Hopefully that will be merged soon. That library must be installed, added to the `config/babel-transformer.js` file, and I also added a method to `config/globals.js` to support libraries looking for the browser's implementation (`crypto.getRandomValues()`).
+* Here's another interesting take on [React Native Synchronous Secure Random Number Generation](https://stackoverflow.com/questions/34732159/react-native-synchronous-secure-random-number-generation).
+
+#### BIP39
+* Initially, I'm relying on an adaptation of [jsbip39](https://github.com/iancoleman/jsbip39/). Will likely switch this out for [bitcoinjs-lib](https://github.com/bitcoinjs/bitcoinjs-lib/), as it supports BIP32 directly as well (among other things).
+* Online Mnemonic Code Converter: https://iancoleman.github.io/bip39/
+
+#### bitcoinjs
+* [Works with React Native?](https://github.com/bitcoinjs/bitcoinjs-lib/)
+
+
+
+# Original React Native README
+
 This project was bootstrapped with [Create React Native App](https://github.com/react-community/create-react-native-app).
 
 Below you'll find information about performing common tasks. The most recent version of this guide is available [here](https://github.com/react-community/create-react-native-app/blob/master/react-native-scripts/template/README.md).

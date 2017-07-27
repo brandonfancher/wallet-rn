@@ -1,4 +1,4 @@
-// const crypto = require('crypto');
+// Don't forget to import './config/globals'; in index.ios.js!
 
 // Inject node globals into React Native global scope.
 global.Buffer = require('buffer').Buffer;
