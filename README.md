@@ -26,7 +26,8 @@ Several of the libraries that will be used in this application rely on `crypto` 
 * Online Mnemonic Code Converter: https://iancoleman.github.io/bip39/
 
 #### bitcoinjs
-* [Works with React Native?](https://github.com/bitcoinjs/bitcoinjs-lib/)
+* [Works with React Native?](https://github.com/bitcoinjs/bitcoinjs-lib/issues/582)
+* [React Native Compatibility](https://github.com/bitcoinjs/bitcoinjs-lib/issues/797)
 
 
 
