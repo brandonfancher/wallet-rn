@@ -1,6 +1,8 @@
 import React from 'react';
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-
+import bitcoin from 'react-native-bitcoinjs-lib';
+import bip39 from 'react-native-bip39';
+// const bitcoin = require('bitcoinjs-lib');
 import Mnemonic from './src/lib/jsbip39';
 
 // import io from 'socket.io-client';
@@ -13,10 +15,13 @@ import Mnemonic from './src/lib/jsbip39';
 export default class App extends React.Component {
 
   state = {
+    address: '',
     blocks: [],
     mnemonic: null,
-    userMnemonic: '',
+    userAddresses: [],
+    userMnemonic: 'praise you muffin lion enable neck grocery crumble super myself license ghost',
     userMnemonicIsValid: null,
+    userSeed: null,
   };
 
   // constructor() {
@@ -58,8 +63,30 @@ export default class App extends React.Component {
     this.setState({ userMnemonic: newMnemonic });
   }
 
+  // genBCAddress = () => {
+  //   // for testing only
+  //   function rng () { return new Buffer('zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz') }
+  //
+  //   // generate random keyPair
+  //   var keyPair = bitcoin.ECPair.makeRandom({ rng: rng });
+  //   var address = keyPair.getAddress();
+  //
+  //   this.setState({ address });
+  // }
+
+  generateAddressFromSeed = () => {
+    const { userAddresses, userMnemonic } = this.state;
+
+    const seed = bip39.mnemonicToSeed(userMnemonic);
+    const root = bitcoin.HDNode.fromSeedHex(seed);
+
+    const seed1 = root.derivePath("m/0'/0/0").getAddress();
+    const seed2 = root.derivePath("m/0'/1/0").getAddress();
+    this.setState({ userSeed: 'done', userAddresses: [...userAddresses, seed1, seed2]});
+  }
+
   render() {
-    const { mnemonic, userMnemonic, userMnemonicIsValid, userSeed } = this.state;
+    const { address, mnemonic, userMnemonic, userMnemonicIsValid, userAddresses, userSeed } = this.state;
     const buttonStyle = { padding: 5, borderColor: 'gray', borderWidth: 1, backgroundColor: '#CCC', borderRadius: 3 };
 
     const valid = () => {
@@ -97,6 +124,15 @@ export default class App extends React.Component {
           <Text>Is Valid?</Text>
         </TouchableOpacity>
         <Text>{valid()}</Text>
+
+        <TouchableOpacity onPress={this.generateAddressFromSeed} style={buttonStyle}>
+          <Text>Generate Address from Seed</Text>
+        </TouchableOpacity>
+
+        <View>
+          {userAddresses.map(address => <Text key={address}>{address}</Text>)}
+        </View>
+
       </View>
     );
   }

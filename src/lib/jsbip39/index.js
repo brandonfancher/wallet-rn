@@ -27,10 +27,11 @@
  */
 
 /*
- * ES2015 Class port by Brandon Fancher
+ * ES2015 Class port and modifiations by Brandon Fancher
  */
 
 import sjcl from 'sjcl';
+import { randomBytes } from 'react-native-randombytes';
 import WORDLISTS from './wordlists';
 
 const PBKDF2_ROUNDS = 2048;
@@ -114,15 +115,7 @@ export default class Mnemonic {
       throw 'Strength should be divisible by 32, but it is not (' + r + ').';
     }
 
-    // NOTE: When running in dev mode, crypto may get supplied by browser V8. Beware.
-    var hasStrongCrypto = 'crypto' in window && window['crypto'] !== null;
-    if (!hasStrongCrypto) {
-      throw 'Mnemonic should be generated with strong randomness, but crypto.getRandomValues is unavailable';
-    }
-
-    var buffer = new Uint8Array(strength / 8);
-    var data = crypto.getRandomValues(buffer);
-
+    const data = randomBytes(strength / 8);
     return this.toMnemonic(data);
   }
 

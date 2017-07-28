@@ -18,7 +18,8 @@ const babelRC = {
 		[require('babel-plugin-rewrite-require'), {
 			aliases: {
 				// constants: 'constants-browserify',
-				crypto: 'react-native-crypto',
+				// 'create-hash': 'create-hash/browser',
+				crypto: 'react-native-crypto', // ON
 				// dns: 'node-libs-browser/mock/dns',
 				// domain: 'domain-browser',
 				// fs: 'node-libs-browser/mock/empty',
@@ -27,19 +28,20 @@ const babelRC = {
 				// net: 'node-libs-browser/mock/net',
 				// os: 'os-browserify/browser',
 				// path: 'path-browserify',
-				pbkdf2: 'react-native-pbkdf2-shim',
+				// pbkdf2: 'react-native-pbkdf2-shim', // ON
 				// querystring: 'querystring-es3',
-				stream: 'stream-browserify',
-				// _stream_duplex: 'readable-stream/duplex',
-				// _stream_passthrough: 'readable-stream/passthrough',
-				// _stream_readable: 'readable-stream/readable',
-				// _stream_transform: 'readable-stream/transform',
-				// _stream_writable: 'readable-stream/writable',
+				stream: 'stream-browserify', // ON
+				_stream_duplex: 'readable-stream/duplex',
+				_stream_passthrough: 'readable-stream/passthrough',
+				_stream_readable: 'readable-stream/readable',
+				_stream_transform: 'readable-stream/transform',
+				_stream_writable: 'readable-stream/writable',
+				randombytes: 'react-native-randombytes',
 				// sys: 'util',
 				// timers: 'timers-browserify',
 				// tls: 'node-libs-browser/mock/tls',
 				// tty: 'tty-browserify',
-				vm: 'vm-browserify',
+				vm: 'vm-browserify', // ON
 				// zlib: 'browserify-zlib'
 			},
 			throwForNonStringLiteral: true
