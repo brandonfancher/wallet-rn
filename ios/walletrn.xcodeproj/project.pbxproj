@@ -804,6 +804,7 @@
 					"-ObjC",
 					"-lc++",
 				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.coinvasion.wallet;
 				PRODUCT_NAME = walletrn;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
@@ -822,6 +823,7 @@
 					"-ObjC",
 					"-lc++",
 				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.coinvasion.wallet;
 				PRODUCT_NAME = walletrn;
 				VERSIONING_SYSTEM = "apple-generic";
 			};

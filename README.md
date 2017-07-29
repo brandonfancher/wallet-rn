@@ -1,5 +1,13 @@
 # wallet-rn
 
+## TODO
+* Remove jsbip39
+* Refer `react-native-randombytes` to my repo until we have the fix.
+* Fork `react-native-bitcoinjs-lib` and `react-native-bip39` myself.
+* Update documentation.
+  * Ensure pbkdf2 is frozen at 3.0.8. An `npm list pbkdf2` should show only 3.0.8.
+
+
 ## Polyfills and Resources Re: Crypto Libraries.
 
 Several of the libraries that will be used in this application rely on `crypto` and other libraries that are usually bundled with Node but which are missing from the React Native environment. Those missing libraries must be shimmed with something like browserify and similar tools. One method for including such shims is [React Nativify](https://github.com/philikon/ReactNativify), which relies on [babel-plugin-rewrite-require](https://www.npmjs.com/package/babel-plugin-rewrite-require) to point existing `require` or `import` scripts to the shimmed packages.

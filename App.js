@@ -2,7 +2,6 @@ import React from 'react';
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import bitcoin from 'react-native-bitcoinjs-lib';
 import bip39 from 'react-native-bip39';
-// const bitcoin = require('bitcoinjs-lib');
 import Mnemonic from './src/lib/jsbip39';
 
 // import io from 'socket.io-client';
