@@ -10,6 +10,8 @@
   * [x] litecoin
   * [x] dash
   * [ ] ethereum
+  * [x] bitcoin testnet3
+  * [x] blockcypher test chain
 * Security review. Make sure that `react-native-crypto` and `crypto-browserify` are secure.
 
 
