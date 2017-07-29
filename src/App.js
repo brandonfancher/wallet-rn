@@ -2,6 +2,7 @@ import React from 'react';
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import bitcoin from 'react-native-bitcoinjs-lib';
 import bip39 from 'react-native-bip39';
+import networks from './helpers/networks';
 
 // import io from 'socket.io-client';
 // import feathers from 'feathers/client'
@@ -31,6 +32,7 @@ export default class App extends React.Component {
     // address: '',
     // blocks: [],
     mnemonic: '',
+    // mnemonic: 'recall exhibit notable tourist comic clutch churn breeze primary idle rookie firm',
     addresses: [],
     mnemonicIsValid: null,
     userSeed: null,
@@ -66,7 +68,7 @@ export default class App extends React.Component {
     const { addresses, mnemonic } = this.state;
 
     const seed = bip39.mnemonicToSeed(mnemonic);
-    const root = bitcoin.HDNode.fromSeedHex(seed);
+    const root = bitcoin.HDNode.fromSeedHex(seed, networks.bitcoin);
 
     const seed1 = root.derivePath("m/0").getAddress();
     const seed2 = root.derivePath("m/1").getAddress();
