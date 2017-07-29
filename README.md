@@ -2,7 +2,6 @@
 
 ## Tasks
 * Fork `react-native-bitcoinjs-lib` and `react-native-bip39` myself. I will control it (more secure) and I can update `bitcoinjs-lib` to support things like Segwit.
-* Take a closer look at `rn-cli.config.js` to see if we can speed up the packager.
 * Support multiple coins
   * [x] bitcoin
   * [x] litecoin
@@ -17,20 +16,18 @@
 
 Some dependencies rely on `crypto` and other libraries that are usually bundled with Node but which are missing from the React Native environment. Those missing libraries must be shimmed with something like browserify and similar tools. One method for including such shims is [React Nativify](https://github.com/philikon/ReactNativify), which relies on [babel-plugin-rewrite-require](https://www.npmjs.com/package/babel-plugin-rewrite-require) to point existing `require` or `import` scripts to the shimmed packages.
 
-Instead of `babel-plugin-rewrite-require`, I'm using the more popular `babel-plugin-module-resolver`, as detailed in this SO: https://stackoverflow.com/questions/40629856/can-we-use-nodejs-code-inside-react-native-application/45207249#45207249.
+Instead of `babel-plugin-rewrite-require`, I'm using the more popular `babel-plugin-module-resolver`, as detailed in this [Stack Overflow Post](https://stackoverflow.com/questions/40629856/can-we-use-nodejs-code-inside-react-native-application/45207249#45207249). I'm also declaring my transformers within `.babelrc`. It's simpler and fixes two issues: slow rebuilds and slow chrome debugger source maps.
 
 ### React Nativify
 
-* Newer versions of React Native (v0.43.3+) seem to have trouble with the transformer: `transformer.transform is not a function`. This issue addresses that: https://github.com/philikon/ReactNativify/issues/6. I structured the transformer code in this project similarly to _wswoodruff_'s solutions: https://github.com/philikon/ReactNativify/issues/6#issuecomment-306072846.
 * The alternative to the React Nativify method is [rn-nodeify](https://github.com/mvayngrib/rn-nodeify/), but that's messy and scary.
 * [node-libs-browser](https://github.com/webpack/node-libs-browser) should be installed to provide many of the basic node functions.
-* **Slower packager times**: take a closer look at the config options in `rn-cli.config.js` to see if we can speed that up.
-* We may have issues with Jest tests when we use them. If so, refer to this SO thread: https://stackoverflow.com/questions/45084751/debugging-react-native-with-node-shims-in-vs-code
+* We may have issues with Jest tests when we use them. If so, refer to this [SO Thread](https://stackoverflow.com/questions/45084751/debugging-react-native-with-node-shims-in-vs-code). One person said that was fixed by remembering to include a `.babelrc` file. We'll see when we get there.
 
 ### crypto
 * There are several libraries that attempt to shim `crypto`: [react-native-crypto](https://github.com/mvayngrib/react-native-crypto) (a clone of [crypto-browserify](https://github.com/crypto-browserify/crypto-browserify) with `randomBytes` replaced) and [native-crypto](https://github.com/calvinmetcalf/native-crypto). I opted for the former. Haven't tried the latter yet.
 * **pbkdf2** If `pbkdf2` errors out, ensure that it is frozen at 3.0.8. An `npm list pbkdf2` should show only 3.0.8.
-* `react-native-crypto` relies on [react-native-randombytes](https://github.com/mvayngrib/react-native-randombytes) for random byte generation, which in turn relies on [SJCL (Standford Javascript Crypto Library)](https://github.com/bitwiseshiftleft/sjcl/) for synchronous generation and iOS's `SecRandomCopyBytes` for asynchronous generation. `react-native-randombytes` recommends linking with `rnpm link`, however that and `react-native link` is not currently working for me. The Manual method must be used. Furthermore, two files must be manually modified in Xcode for newer versions of React Native: https://github.com/mvayngrib/react-native-randombytes/pull/15. Hopefully that will be merged soon. In the meantime, I'm depending on my branch (listed in `package.json`) with those files fixed already. That library must be installed, added to the `config/babel-transformer.js` file, and I also added a method to `config/globals.js` to support libraries looking for the browser's implementation (`crypto.getRandomValues()`).
+* `react-native-crypto` relies on [react-native-randombytes](https://github.com/mvayngrib/react-native-randombytes) for random byte generation, which in turn relies on [SJCL (Standford Javascript Crypto Library)](https://github.com/bitwiseshiftleft/sjcl/) for synchronous generation and iOS's `SecRandomCopyBytes` for asynchronous generation. `react-native-randombytes` recommends linking with `rnpm link`, however that and `react-native link` is not currently working for me. The Manual method must be used. Furthermore, two files must be manually modified in Xcode for newer versions of React Native: https://github.com/mvayngrib/react-native-randombytes/pull/15. Hopefully that will be merged soon. In the meantime, I'm depending on my branch (listed in `package.json`) with those files fixed already. That library must be installed, added to the `.babelrc` file.
 * Here's another interesting take on [React Native Synchronous Secure Random Number Generation](https://stackoverflow.com/questions/34732159/react-native-synchronous-secure-random-number-generation).
 
 #### BIP39

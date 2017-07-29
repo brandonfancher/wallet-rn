@@ -1,5 +1,15 @@
 {
-  "presets": [],
+  "presets": ["react-native"],
+  "sourceMaps": true,
+  "plugins": [
+    ["module-resolver", {
+      "alias": {
+        "crypto": "react-native-crypto",
+				"stream": "stream-browserify",
+				"vm": "vm-browserify",
+      },
+    }],
+  ],
   "env": {
     "development": {
       "plugins": ["transform-react-jsx-source"]
