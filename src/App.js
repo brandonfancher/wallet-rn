@@ -36,6 +36,7 @@ export default class App extends React.Component {
     addresses: [],
     mnemonicIsValid: null,
     userSeed: null,
+    xpub: '',
   };
 
   static generateMnemonic = async (bitsOfEntropy = 128) => {
@@ -69,14 +70,15 @@ export default class App extends React.Component {
 
     const seed = bip39.mnemonicToSeed(mnemonic);
     const root = bitcoin.HDNode.fromSeedHex(seed, networks.bitcoin);
+    const xpub = root.neutered().toBase58();
 
     const seed1 = root.derivePath("m/0").getAddress();
     const seed2 = root.derivePath("m/1").getAddress();
-    this.setState({ addresses: [...addresses, seed1, seed2]});
+    this.setState({ addresses: [...addresses, seed1, seed2], xpub });
   }
 
   render() {
-    const { address, mnemonic, mnemonicIsValid, addresses, userSeed } = this.state;
+    const { mnemonic, mnemonicIsValid, addresses, userSeed, xpub } = this.state;
     const buttonStyle = { padding: 5, borderColor: 'gray', borderWidth: 1, backgroundColor: '#CCC', borderRadius: 3 };
 
     const valid = () => {
@@ -117,6 +119,10 @@ export default class App extends React.Component {
 
         <View>
           {addresses.map(address => <Text key={address}>{address}</Text>)}
+        </View>
+
+        <View>
+          <Text>xpub: {xpub}</Text>
         </View>
 
       </View>

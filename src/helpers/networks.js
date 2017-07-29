@@ -33,7 +33,7 @@ module.exports = {
     wif: 0xb0
   },
   dash: {
-    messagePrefix: '\x20DASH Signed Message:\n',
+    messagePrefix: '\x20DASH Signed Message:\n', // TODO: See how sensitive this is. I made this line up.
     bip32: {
       public: 0x0488b21e,
       private: 0x0488ade4

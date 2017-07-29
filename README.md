@@ -4,7 +4,7 @@
 * Set up nodeenv
 * Update documentation.
   * For example, ensure pbkdf2 is frozen at 3.0.8. An `npm list pbkdf2` should show only 3.0.8.
-* Fork `react-native-bitcoinjs-lib` and `react-native-bip39` myself.
+* Fork `react-native-bitcoinjs-lib` and `react-native-bip39` myself. I will control it (more secure) and I can update `bitcoinjs-lib` to support things like Segwit.
 * Support multiple coins
   * [x] bitcoin
   * [x] litecoin
