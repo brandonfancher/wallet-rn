@@ -1,11 +1,15 @@
 # wallet-rn
 
 ## TODO
-* Support multiple coins
 * Set up nodeenv
-* Fork `react-native-bitcoinjs-lib` and `react-native-bip39` myself.
 * Update documentation.
-  * Ensure pbkdf2 is frozen at 3.0.8. An `npm list pbkdf2` should show only 3.0.8.
+  * For example, ensure pbkdf2 is frozen at 3.0.8. An `npm list pbkdf2` should show only 3.0.8.
+* Fork `react-native-bitcoinjs-lib` and `react-native-bip39` myself.
+* Support multiple coins
+  * [x] bitcoin
+  * [x] litecoin
+  * [x] dash
+  * [ ] ethereum
 
 
 ## Polyfills and Resources Re: Crypto Libraries.
