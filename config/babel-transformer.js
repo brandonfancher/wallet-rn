@@ -1,13 +1,11 @@
-'use strict'
-
 const babel = require('babel-core');
 
 /**
  * This is your `.babelrc` equivalent.
  */
 const babelRC = {
-	presets: [require('babel-preset-react-native')],
-	sourceMaps: true,
+	presets: ['react-native'],
+	// sourceMaps: true, // Enabling this slows down the chrome debugger by A LOT.
 	plugins: [
 
 		// The following plugin will rewrite imports. Reimplementations of node

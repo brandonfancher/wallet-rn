@@ -2,7 +2,6 @@
 
 ## Tasks
 * Fork `react-native-bitcoinjs-lib` and `react-native-bip39` myself. I will control it (more secure) and I can update `bitcoinjs-lib` to support things like Segwit.
-* Figure out how to fix slow Chrome debugger initialization (see below)
 * Take a closer look at `rn-cli.config.js` to see if we can speed up the packager.
 * Support multiple coins
   * [x] bitcoin
@@ -25,7 +24,6 @@ Instead of `babel-plugin-rewrite-require`, I'm using the more popular `babel-plu
 * Newer versions of React Native (v0.43.3+) seem to have trouble with the transformer: `transformer.transform is not a function`. This issue addresses that: https://github.com/philikon/ReactNativify/issues/6. I structured the transformer code in this project similarly to _wswoodruff_'s solutions: https://github.com/philikon/ReactNativify/issues/6#issuecomment-306072846.
 * The alternative to the React Nativify method is [rn-nodeify](https://github.com/mvayngrib/rn-nodeify/), but that's messy and scary.
 * [node-libs-browser](https://github.com/webpack/node-libs-browser) should be installed to provide many of the basic node functions.
-* **Chrome Debugger**: One side effect seems to be decreased Chrome debugger load times: https://github.com/philikon/ReactNativify/issues/7. We'll have to investigate that later.
 * **Slower packager times**: take a closer look at the config options in `rn-cli.config.js` to see if we can speed that up.
 * We may have issues with Jest tests when we use them. If so, refer to this SO thread: https://stackoverflow.com/questions/45084751/debugging-react-native-with-node-shims-in-vs-code
 
