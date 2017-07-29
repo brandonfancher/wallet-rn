@@ -1,7 +1,6 @@
 # wallet-rn
 
 ## Tasks
-* Update documentation. For example, ensure pbkdf2 is frozen at 3.0.8. An `npm list pbkdf2` should show only 3.0.8.
 * Fork `react-native-bitcoinjs-lib` and `react-native-bip39` myself. I will control it (more secure) and I can update `bitcoinjs-lib` to support things like Segwit.
 * Figure out how to fix slow Chrome debugger initialization (see below)
 * Take a closer look at `rn-cli.config.js` to see if we can speed up the packager.
