@@ -7,7 +7,7 @@ const babel = require('babel-core');
  */
 const babelRC = {
 	presets: [require('babel-preset-react-native')],
-	"sourceMaps": true,
+	sourceMaps: true,
 	plugins: [
 
 		// The following plugin will rewrite imports. Reimplementations of node
@@ -15,34 +15,44 @@ const babelRC = {
 		// automatically by the React Native packager.  All other built-in node
 		// libraries get rewritten to their browserify counterpart.
 
-		[require('babel-plugin-rewrite-require'), {
-			aliases: {
-				crypto: 'react-native-crypto',
+		["module-resolver", {
+      alias: {
+        crypto: 'react-native-crypto',
 				stream: 'stream-browserify',
 				vm: 'vm-browserify',
-				// constants: 'constants-browserify',
-				// dns: 'node-libs-browser/mock/dns',
-				// domain: 'domain-browser',
-				// fs: 'node-libs-browser/mock/empty',
-				// http: 'stream-http',
-				// https: 'https-browserify',
-				// net: 'node-libs-browser/mock/net',
-				// os: 'os-browserify/browser',
-				// path: 'path-browserify',
-				// querystring: 'querystring-es3',
-				// _stream_duplex: 'readable-stream/duplex',
-				// _stream_passthrough: 'readable-stream/passthrough',
-				// _stream_readable: 'readable-stream/readable',
-				// _stream_transform: 'readable-stream/transform',
-				// _stream_writable: 'readable-stream/writable',
-				// sys: 'util',
-				// timers: 'timers-browserify',
-				// tls: 'node-libs-browser/mock/tls',
-				// tty: 'tty-browserify',
-				// zlib: 'browserify-zlib'
-			},
-			throwForNonStringLiteral: true
-		}]
+      },
+    }],
+
+		// The following is also an option, but `babel-plugin-rewrite-require` is less popular than `babel-plugin-module-resolver`.
+		// See: https://stackoverflow.com/questions/40629856/can-we-use-nodejs-code-inside-react-native-application/45207249#45207249
+		// [require('babel-plugin-rewrite-require'), {
+		// 	aliases: {
+		// 		crypto: 'react-native-crypto',
+		// 		stream: 'stream-browserify',
+		// 		vm: 'vm-browserify',
+		// 		// constants: 'constants-browserify',
+		// 		// dns: 'node-libs-browser/mock/dns',
+		// 		// domain: 'domain-browser',
+		// 		// fs: 'node-libs-browser/mock/empty',
+		// 		// http: 'stream-http',
+		// 		// https: 'https-browserify',
+		// 		// net: 'node-libs-browser/mock/net',
+		// 		// os: 'os-browserify/browser',
+		// 		// path: 'path-browserify',
+		// 		// querystring: 'querystring-es3',
+		// 		// _stream_duplex: 'readable-stream/duplex',
+		// 		// _stream_passthrough: 'readable-stream/passthrough',
+		// 		// _stream_readable: 'readable-stream/readable',
+		// 		// _stream_transform: 'readable-stream/transform',
+		// 		// _stream_writable: 'readable-stream/writable',
+		// 		// sys: 'util',
+		// 		// timers: 'timers-browserify',
+		// 		// tls: 'node-libs-browser/mock/tls',
+		// 		// tty: 'tty-browserify',
+		// 		// zlib: 'browserify-zlib'
+		// 	},
+		// 	throwForNonStringLiteral: true
+		// }],
 	]
 };
 

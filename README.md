@@ -18,6 +18,8 @@
 
 Some dependencies rely on `crypto` and other libraries that are usually bundled with Node but which are missing from the React Native environment. Those missing libraries must be shimmed with something like browserify and similar tools. One method for including such shims is [React Nativify](https://github.com/philikon/ReactNativify), which relies on [babel-plugin-rewrite-require](https://www.npmjs.com/package/babel-plugin-rewrite-require) to point existing `require` or `import` scripts to the shimmed packages.
 
+Instead of `babel-plugin-rewrite-require`, I'm using the more popular `babel-plugin-module-resolver`, as detailed in this SO: https://stackoverflow.com/questions/40629856/can-we-use-nodejs-code-inside-react-native-application/45207249#45207249.
+
 ### React Nativify
 
 * Newer versions of React Native (v0.43.3+) seem to have trouble with the transformer: `transformer.transform is not a function`. This issue addresses that: https://github.com/philikon/ReactNativify/issues/6. I structured the transformer code in this project similarly to _wswoodruff_'s solutions: https://github.com/philikon/ReactNativify/issues/6#issuecomment-306072846.
@@ -25,6 +27,7 @@ Some dependencies rely on `crypto` and other libraries that are usually bundled 
 * [node-libs-browser](https://github.com/webpack/node-libs-browser) should be installed to provide many of the basic node functions.
 * **Chrome Debugger**: One side effect seems to be decreased Chrome debugger load times: https://github.com/philikon/ReactNativify/issues/7. We'll have to investigate that later.
 * **Slower packager times**: take a closer look at the config options in `rn-cli.config.js` to see if we can speed that up.
+* We may have issues with Jest tests when we use them. If so, refer to this SO thread: https://stackoverflow.com/questions/45084751/debugging-react-native-with-node-shims-in-vs-code
 
 ### crypto
 * There are several libraries that attempt to shim `crypto`: [react-native-crypto](https://github.com/mvayngrib/react-native-crypto) (a clone of [crypto-browserify](https://github.com/crypto-browserify/crypto-browserify) with `randomBytes` replaced) and [native-crypto](https://github.com/calvinmetcalf/native-crypto). I opted for the former. Haven't tried the latter yet.
