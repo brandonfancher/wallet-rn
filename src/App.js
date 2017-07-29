@@ -2,7 +2,6 @@ import React from 'react';
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import bitcoin from 'react-native-bitcoinjs-lib';
 import bip39 from 'react-native-bip39';
-import Mnemonic from './src/lib/jsbip39';
 
 // import io from 'socket.io-client';
 // import feathers from 'feathers/client'
@@ -12,16 +11,6 @@ import Mnemonic from './src/lib/jsbip39';
 
 
 export default class App extends React.Component {
-
-  state = {
-    address: '',
-    blocks: [],
-    mnemonic: null,
-    userAddresses: [],
-    userMnemonic: 'praise you muffin lion enable neck grocery crumble super myself license ghost',
-    userMnemonicIsValid: null,
-    userSeed: null,
-  };
 
   // constructor() {
   //   super();
@@ -38,60 +27,60 @@ export default class App extends React.Component {
   //   });
   // }
 
-  generateMnemonic = () => {
-    const m = new Mnemonic();
-    const words = m.generate();
+  state = {
+    // address: '',
+    // blocks: [],
+    mnemonic: '',
+    addresses: [],
+    mnemonicIsValid: null,
+    userSeed: null,
+  };
+
+  static generateMnemonic = async (bitsOfEntropy = 128) => {
+    try {
+      return await bip39.generateMnemonic(bitsOfEntropy);
+    } catch (e) {
+      console.error('Error while generating key: ', e);
+      return false;
+    }
+  }
+
+  setNewMnemonic = async () => {
+    const words = await App.generateMnemonic();
     this.setState({ mnemonic: words });
   }
 
   validateUserMnemonic = () => {
-    const { userMnemonic } = this.state;
-    const m = new Mnemonic();
-    this.setState({ userMnemonicIsValid: m.check(userMnemonic)});
+    const { mnemonic } = this.state;
+    const mnemonicIsValid = bip39.validateMnemonic(mnemonic);
+    this.setState({ mnemonicIsValid });
   }
 
   generateSeed = () => {
-    const { userMnemonic } = this.state;
-    const m = new Mnemonic();
-    this.setState({ userSeed: m.toSeed(userMnemonic) });
-  }
-
-  fillInSeed = () => {
     const { mnemonic } = this.state;
-    const newMnemonic = mnemonic.toString();
-    this.setState({ userMnemonic: newMnemonic });
+    const seed = bip39.mnemonicToSeedHex(mnemonic);
+    this.setState({ userSeed: seed });
   }
-
-  // genBCAddress = () => {
-  //   // for testing only
-  //   function rng () { return new Buffer('zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz') }
-  //
-  //   // generate random keyPair
-  //   var keyPair = bitcoin.ECPair.makeRandom({ rng: rng });
-  //   var address = keyPair.getAddress();
-  //
-  //   this.setState({ address });
-  // }
 
   generateAddressFromSeed = () => {
-    const { userAddresses, userMnemonic } = this.state;
+    const { addresses, mnemonic } = this.state;
 
-    const seed = bip39.mnemonicToSeed(userMnemonic);
+    const seed = bip39.mnemonicToSeed(mnemonic);
     const root = bitcoin.HDNode.fromSeedHex(seed);
 
-    const seed1 = root.derivePath("m/0'/0/0").getAddress();
-    const seed2 = root.derivePath("m/0'/1/0").getAddress();
-    this.setState({ userSeed: 'done', userAddresses: [...userAddresses, seed1, seed2]});
+    const seed1 = root.derivePath("m/0").getAddress();
+    const seed2 = root.derivePath("m/1").getAddress();
+    this.setState({ addresses: [...addresses, seed1, seed2]});
   }
 
   render() {
-    const { address, mnemonic, userMnemonic, userMnemonicIsValid, userAddresses, userSeed } = this.state;
+    const { address, mnemonic, mnemonicIsValid, addresses, userSeed } = this.state;
     const buttonStyle = { padding: 5, borderColor: 'gray', borderWidth: 1, backgroundColor: '#CCC', borderRadius: 3 };
 
     const valid = () => {
-      if (userMnemonicIsValid) {
+      if (mnemonicIsValid) {
         return <Text>YES</Text>;
-      } else if (userMnemonicIsValid === false) {
+      } else if (mnemonicIsValid === false) {
         return <Text>NO</Text>;
       }
     }
@@ -100,18 +89,14 @@ export default class App extends React.Component {
       <View style={styles.container}>
         {/* <Text>Block Go Here</Text>
         {this.state.blocks.map((block, i) => <Text key={`block-${block.hash}`}>{block.hash}</Text>)} */}
-        <TouchableOpacity onPress={this.generateMnemonic} style={buttonStyle}>
+        <TouchableOpacity onPress={this.setNewMnemonic} style={buttonStyle}>
           <Text>Generate Mnemonic</Text>
         </TouchableOpacity>
-        {mnemonic &&
-          <TouchableOpacity onPress={this.fillInSeed}>
-            <Text>{mnemonic.toString()}</Text>
-          </TouchableOpacity>
-        }
         <TextInput
+          onChangeText={(mnemonic) => this.setState({ mnemonic })}
+          multiline
           style={{height: 40, borderColor: 'gray', borderWidth: 1}}
-          onChangeText={(userMnemonic) => this.setState({ userMnemonic })}
-          value={userMnemonic}
+          value={mnemonic}
         />
 
         <TouchableOpacity onPress={this.generateSeed} style={buttonStyle}>
@@ -129,7 +114,7 @@ export default class App extends React.Component {
         </TouchableOpacity>
 
         <View>
-          {userAddresses.map(address => <Text key={address}>{address}</Text>)}
+          {addresses.map(address => <Text key={address}>{address}</Text>)}
         </View>
 
       </View>

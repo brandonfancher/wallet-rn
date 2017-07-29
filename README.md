@@ -1,8 +1,8 @@
 # wallet-rn
 
 ## TODO
-* Remove jsbip39
-* Refer `react-native-randombytes` to my repo until we have the fix.
+* Support multiple coins
+* Set up nodeenv
 * Fork `react-native-bitcoinjs-lib` and `react-native-bip39` myself.
 * Update documentation.
   * Ensure pbkdf2 is frozen at 3.0.8. An `npm list pbkdf2` should show only 3.0.8.
