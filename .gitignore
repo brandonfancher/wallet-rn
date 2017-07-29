@@ -1,7 +1,7 @@
 # General
 .expo/
 npm-debug.*
-trash
+/config/env.js
 
 # Xcode
 !**/*.xcodeproj

@@ -8,7 +8,6 @@ import networks from './helpers/networks';
 // import feathers from 'feathers/client'
 // import hooks from 'feathers-hooks';
 // import socketio from 'feathers-socketio/client'
-// const API_URL = 'http://localhost:3030';
 
 
 export default class App extends React.Component {
@@ -16,7 +15,7 @@ export default class App extends React.Component {
   // constructor() {
   //   super();
   //   const options = { transports: ['websocket'], pingTimeout: 3000, pingInterval: 5000 };
-  //   const socket = io(API_URL, options);
+  //   const socket = io(process.env.API_URL, options);
   //
   //   this.app = feathers()
   //     .configure(socketio(socket))
@@ -31,8 +30,7 @@ export default class App extends React.Component {
   state = {
     // address: '',
     // blocks: [],
-    mnemonic: '',
-    // mnemonic: 'recall exhibit notable tourist comic clutch churn breeze primary idle rookie firm',
+    mnemonic: process.env.TEST_MNEMONIC ? process.env.MNEMONIC : '',
     addresses: [],
     mnemonicIsValid: null,
     userSeed: null,
@@ -65,11 +63,11 @@ export default class App extends React.Component {
     this.setState({ userSeed: seed });
   }
 
-  generateAddressFromSeed = () => {
+  generateAddressFromSeed = (network = process.env.ASSET_NETWORK) => {
     const { addresses, mnemonic } = this.state;
 
     const seed = bip39.mnemonicToSeed(mnemonic);
-    const root = bitcoin.HDNode.fromSeedHex(seed, networks.bitcoin);
+    const root = bitcoin.HDNode.fromSeedHex(seed, network);
     const xpub = root.neutered().toBase58();
 
     const seed1 = root.derivePath("m/0").getAddress();
