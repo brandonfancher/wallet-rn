@@ -28,7 +28,7 @@
     "react-native-bip39": "2.3.0",
     "react-native-bitcoinjs-lib": "2.3.9",
     "react-native-crypto": "2.0.2",
-    "react-native-randombytes": "2.2.0",
+    "react-native-randombytes": "git+https://git@github.com/brandonfancher/react-native-randombytes.git",
     "socket.io-client": "2.0.3",
     "stream-browserify": "2.0.1",
     "vm-browserify": "0.0.4"
