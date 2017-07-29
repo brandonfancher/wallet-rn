@@ -63,7 +63,7 @@ export default class App extends React.Component {
     this.setState({ userSeed: seed });
   }
 
-  generateAddressFromSeed = (network = process.env.ASSET_NETWORK) => {
+  generateAddressFromSeed = (e, network = process.env.ASSET_NETWORK) => {
     const { addresses, mnemonic } = this.state;
 
     const seed = bip39.mnemonicToSeed(mnemonic);
