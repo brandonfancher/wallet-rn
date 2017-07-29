@@ -51,5 +51,15 @@ module.exports = {
     pubKeyHash: 0x8c,
     scriptHash: 0x13,
     wif: 0xef,
-  }
+  },
+  blockcypherTestChain: { // TODO: Test this one out to verify values below.
+    messagePrefix: '\x18Bitcoin Signed Message:\n',
+    bip32: {
+      public: 0x0488b21e,
+      private: 0x0488ade4
+    },
+    pubKeyHash: 0x1b, // https://www.blockcypher.com/dev/bitcoin/#testing
+    scriptHash: 0x1f, // https://www.blockcypher.com/dev/bitcoin/#testing
+    wif: 0x80
+  },
 }
