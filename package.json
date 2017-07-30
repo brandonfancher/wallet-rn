@@ -17,7 +17,7 @@
     "preset": "jest-expo"
   },
   "dependencies": {
-    "babel-plugin-module-resolver": "^2.7.1",
+    "babel-plugin-module-resolver": "2.7.1",
     "feathers": "2.1.4",
     "feathers-hooks": "2.0.2",
     "feathers-socketio": "2.0.0",
