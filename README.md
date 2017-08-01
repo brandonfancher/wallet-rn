@@ -1,6 +1,7 @@
 # wallet-rn
 
 ## Tasks
+* Store addresses, keys, etc. Send and receive transactions.
 * Fork `react-native-bitcoinjs-lib` and `react-native-bip39` myself. I will control it (more secure) and I can update `bitcoinjs-lib` to support things like Segwit.
 * Support multiple coins
   * [x] bitcoin
@@ -39,3 +40,7 @@ Instead of `babel-plugin-rewrite-require`, I'm using the more popular `babel-plu
 
 ## Other Documentation
 * [Original React Native README](/docs/react-native.md)
+* [Tunneling to Overcome Dev Network Issues](/docs/tunneling.md)
+
+## Before Going to Production
+* Ensure any dev tunneling changes are reverted (especially App Transport Security Settings exceptions.)
