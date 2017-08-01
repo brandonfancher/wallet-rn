@@ -10,6 +10,7 @@
 #import "AppDelegate.h"
 
 #import <React/RCTBundleURLProvider.h>
+#import <React/RCTConvert.h>
 #import <React/RCTRootView.h>
 
 @implementation AppDelegate
@@ -18,7 +19,18 @@
 {
   NSURL *jsCodeLocation;
 
-  jsCodeLocation = [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index.ios" fallbackResource:nil];
+  // Added by Brandon: If port and host are provided in Schemes > Environment Variables, use those.
+  // This helps us develop on-device on restricted networks with tools like ngrok.
+  NSDictionary *environment = [[NSProcessInfo processInfo] environment]; // Get Environment Variables from Schemes
+  if (environment[@"TUNNEL_PORT"] && environment[@"TUNNEL_HOST"]) {
+    NSString *port = environment[@"TUNNEL_PORT"];
+    NSString *host = environment[@"TUNNEL_HOST"];
+    NSString *URLString = [NSString stringWithFormat:@"http://%@:%@/index.ios.bundle?platform=ios&dev=true", host, port];
+    jsCodeLocation = [RCTConvert NSURL:URLString];
+  } else {
+    // Original Code from React
+    jsCodeLocation = [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index.ios" fallbackResource:nil];
+  }
 
   RCTRootView *rootView = [[RCTRootView alloc] initWithBundleURL:jsCodeLocation
                                                       moduleName:@"walletrn"
