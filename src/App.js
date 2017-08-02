@@ -1,128 +1,68 @@
-import React from 'react';
-import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import bitcoin from 'react-native-bitcoinjs-lib';
-import bip39 from 'react-native-bip39';
-import networks from './helpers/networks';
-
-// import io from 'socket.io-client';
-// import feathers from 'feathers/client'
-// import hooks from 'feathers-hooks';
-// import socketio from 'feathers-socketio/client'
+import React, { PureComponent } from 'react';
+import { Dimensions, StatusBar, StyleSheet, View } from 'react-native';
+import { TabViewAnimated, TabBar, SceneMap } from 'react-native-tab-view';
+import CoinDetail from './CoinDetail';
+const { height, width } = Dimensions.get('window');
 
 
-export default class App extends React.Component {
-
-  // constructor() {
-  //   super();
-  //   const options = { transports: ['websocket'], pingTimeout: 3000, pingInterval: 5000 };
-  //   const socket = io(process.env.API_URL, options);
-  //
-  //   this.app = feathers()
-  //     .configure(socketio(socket))
-  //     .configure(hooks());
-  //
-  //   this.app.service('block').on('created', newBlock => {
-  //     console.log(newBlock);
-  //     this.setState({ blocks: [...this.state.blocks, newBlock] })
-  //   });
-  // }
-
+export default class SlideView extends PureComponent {
   state = {
-    // address: '',
-    // blocks: [],
-    mnemonic: process.env.TEST_MNEMONIC ? process.env.MNEMONIC : '',
-    addresses: [],
-    mnemonicIsValid: null,
-    userSeed: null,
-    xpub: '',
+    index: 1,
+    routes: [
+      { key: '1', name: 'dash' },
+      { key: '2', name: 'bitcoin' },
+      { key: '3', name: 'litecoin' },
+    ],
   };
 
-  static generateMnemonic = async (bitsOfEntropy = 128) => {
-    try {
-      return await bip39.generateMnemonic(bitsOfEntropy);
-    } catch (e) {
-      console.error('Error while generating key: ', e);
-      return false;
-    }
-  }
+  _handleIndexChange = (index) => {
+    const { routes } = this.state;
+    const routeName = routes[index].name;
+    this.setState({ index });
+    // Not sure if we should scroll back to home for given coin onOut or onReturn.
+    this[routeName].scrollView.scrollTo({ y: height + 1 });
+  };
 
-  setNewMnemonic = async () => {
-    const words = await App.generateMnemonic();
-    this.setState({ mnemonic: words });
-  }
-
-  validateUserMnemonic = () => {
-    const { mnemonic } = this.state;
-    const mnemonicIsValid = bip39.validateMnemonic(mnemonic);
-    this.setState({ mnemonicIsValid });
-  }
-
-  generateSeed = () => {
-    const { mnemonic } = this.state;
-    const seed = bip39.mnemonicToSeedHex(mnemonic);
-    this.setState({ userSeed: seed });
-  }
-
-  generateAddressFromSeed = (e, network = process.env.ASSET_NETWORK) => {
-    const { addresses, mnemonic } = this.state;
-
-    const seed = bip39.mnemonicToSeed(mnemonic);
-    const root = bitcoin.HDNode.fromSeedHex(seed, network);
-    const xpub = root.neutered().toBase58();
-
-    const seed1 = root.derivePath("m/0").getAddress();
-    const seed2 = root.derivePath("m/1").getAddress();
-    this.setState({ addresses: [...addresses, seed1, seed2], xpub });
-  }
+  _renderScene = SceneMap({
+    '1': ({ route }) => (
+      <CoinDetail
+        ref={ref => this.dash = ref}
+        backgroundColor="#55bbeb"
+        coin="Dash"
+        route={route}
+        currentRouteIndex={this.state.index}
+      />
+    ),
+    '2': ({ route }) => (
+      <CoinDetail
+        ref={ref => this.bitcoin = ref}
+        backgroundColor="#06b07d"
+        coin="Bitcoin"
+        route={route}
+        currentRouteIndex={this.state.index}
+      />
+    ),
+    '3': ({ route }) => (
+      <CoinDetail
+        ref={ref => this.litecoin = ref}
+        backgroundColor="#ffe14d"
+        coin="Litecoin"
+        route={route}
+        currentRouteIndex={this.state.index}
+      />
+    ),
+  });
 
   render() {
-    const { mnemonic, mnemonicIsValid, addresses, userSeed, xpub } = this.state;
-    const buttonStyle = { padding: 5, borderColor: 'gray', borderWidth: 1, backgroundColor: '#CCC', borderRadius: 3 };
-
-    const valid = () => {
-      if (mnemonicIsValid) {
-        return <Text>YES</Text>;
-      } else if (mnemonicIsValid === false) {
-        return <Text>NO</Text>;
-      }
-    }
-
     return (
       <View style={styles.container}>
-        {/* <Text>Block Go Here</Text>
-        {this.state.blocks.map((block, i) => <Text key={`block-${block.hash}`}>{block.hash}</Text>)} */}
-        <TouchableOpacity onPress={this.setNewMnemonic} style={buttonStyle}>
-          <Text>Generate Mnemonic</Text>
-        </TouchableOpacity>
-        <TextInput
-          onChangeText={(mnemonic) => this.setState({ mnemonic })}
-          multiline
-          style={{height: 40, borderColor: 'gray', borderWidth: 1}}
-          value={mnemonic}
+        <StatusBar barStyle="light-content" />
+        <TabViewAnimated
+          style={styles.container}
+          navigationState={this.state}
+          renderScene={this._renderScene}
+          onIndexChange={this._handleIndexChange}
         />
-
-        <TouchableOpacity onPress={this.generateSeed} style={buttonStyle}>
-          <Text>Generate BIP39 Seed</Text>
-        </TouchableOpacity>
-        <Text>{userSeed}</Text>
-
-        <TouchableOpacity onPress={this.validateUserMnemonic} style={buttonStyle}>
-          <Text>Is Valid?</Text>
-        </TouchableOpacity>
-        <Text>{valid()}</Text>
-
-        <TouchableOpacity onPress={this.generateAddressFromSeed} style={buttonStyle}>
-          <Text>Generate Address from Seed</Text>
-        </TouchableOpacity>
-
-        <View>
-          {addresses.map(address => <Text key={address}>{address}</Text>)}
-        </View>
-
-        <View>
-          <Text>xpub: {xpub}</Text>
-        </View>
-
       </View>
     );
   }
@@ -131,9 +71,5 @@ export default class App extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    marginTop: 64,
-    // justifyContent: 'center',
   },
 });
