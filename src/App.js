@@ -1,11 +1,30 @@
 import React, { PureComponent } from 'react';
-import { Dimensions, StatusBar, StyleSheet, View } from 'react-native';
+import { Dimensions, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { TabViewAnimated, TabBar, SceneMap } from 'react-native-tab-view';
+import Drawer from 'react-native-drawer';
 import CoinDetail from './CoinDetail';
+import { UserButton } from './components';
+import Icon from 'react-native-vector-icons/EvilIcons';
 const { height, width } = Dimensions.get('window');
 
 
+const UserDrawer = ({ closeDrawer }) => (
+  <TouchableOpacity
+    activeOpacity={1}
+    style={[styles.container, {
+      backgroundColor: 'blue',
+      height: height,
+      justifyContent: 'center',
+      alignItems: 'center',
+    }]}
+    onPress={closeDrawer}
+  >
+    <Text style={{ color: 'white', fontSize: 40 }}>Profile</Text>
+  </TouchableOpacity>
+);
+
 export default class SlideView extends PureComponent {
+
   state = {
     index: 1,
     routes: [
@@ -53,17 +72,30 @@ export default class SlideView extends PureComponent {
     ),
   });
 
+  closeDrawer = () => this._drawer.close();
+  openDrawer = () => this._drawer.open();
+
   render() {
     return (
-      <View style={styles.container}>
-        <StatusBar barStyle="light-content" />
-        <TabViewAnimated
-          style={styles.container}
-          navigationState={this.state}
-          renderScene={this._renderScene}
-          onIndexChange={this._handleIndexChange}
-        />
-      </View>
+      <Drawer
+        content={<UserDrawer closeDrawer={this.closeDrawer} />}
+        ref={ref => this._drawer = ref}
+        side="right"
+        type="overlay"
+        tweenEasing={'easeInOutCubic'}
+        tweenHandler={tweenHandler}
+      >
+        <View style={styles.container}>
+          <StatusBar barStyle="light-content" />
+          <TabViewAnimated
+            style={styles.container}
+            navigationState={this.state}
+            renderScene={this._renderScene}
+            onIndexChange={this._handleIndexChange}
+          />
+          <UserButton openDrawer={this.openDrawer} />
+        </View>
+      </Drawer>
     );
   }
 }
@@ -71,5 +103,11 @@ export default class SlideView extends PureComponent {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+});
+
+const tweenHandler = (ratio) => ({
+  mainOverlay: {
+    backgroundColor: `rgba(71, 71, 71, ${ratio / 1.5})`,
   },
 });

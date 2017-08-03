@@ -11,6 +11,7 @@
   * [x] bitcoin testnet3
   * [x] blockcypher test chain
 * Security review. Make sure that `react-native-crypto` and `crypto-browserify` are secure.
+* Fix view height with something like `react-native-status-bar-size` when hotspot status bar size increases. Or using the `<View />`'s `onLayout()` prop.
 
 
 ## Polyfills and Resources Re: Crypto Libraries.

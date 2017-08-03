@@ -8,6 +8,7 @@
 /* Begin PBXBuildFile section */
 		73EEC93D1BFE4B1D00D468EB /* RNRandomBytes.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 73EEC93C1BFE4B1D00D468EB /* RNRandomBytes.h */; };
 		73EEC93F1BFE4B1D00D468EB /* RNRandomBytes.m in Sources */ = {isa = PBXBuildFile; fileRef = 73EEC93E1BFE4B1D00D468EB /* RNRandomBytes.m */; };
+		7182313FED41400E99B6E7C7 /* libRNVectorIcons.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BDEFBBE8915847BB9506B224 /* libRNVectorIcons.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -29,6 +30,8 @@
 		73EEC93E1BFE4B1D00D468EB /* RNRandomBytes.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RNRandomBytes.m; sourceTree = "<group>"; };
 		73EEC94A1BFE4B1D00D468EB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6D0D9C87DE774FCFB83B195A /* RNRandomBytes.xcodeproj */ = {isa = PBXFileReference; name = "RNRandomBytes.xcodeproj"; path = "../node_modules/react-native-randombytes/RNRandomBytes.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
+		2FBFBA5AF3BB4CF6A945628F /* RNVectorIcons.xcodeproj */ = {isa = PBXFileReference; name = "RNVectorIcons.xcodeproj"; path = "../node_modules/react-native-vector-icons/RNVectorIcons.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
+		BDEFBBE8915847BB9506B224 /* libRNVectorIcons.a */ = {isa = PBXFileReference; name = "libRNVectorIcons.a"; path = "libRNVectorIcons.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -36,6 +39,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7182313FED41400E99B6E7C7 /* libRNVectorIcons.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -81,6 +85,7 @@
 			isa = "PBXGroup";
 			children = (
 				6D0D9C87DE774FCFB83B195A /* RNRandomBytes.xcodeproj */,
+				2FBFBA5AF3BB4CF6A945628F /* RNVectorIcons.xcodeproj */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -245,6 +250,10 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+				);
 			};
 			name = Debug;
 		};
@@ -254,6 +263,10 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+				);
 			};
 			name = Release;
 		};

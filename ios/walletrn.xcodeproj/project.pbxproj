@@ -22,6 +22,7 @@
 		146834051AC3E58100842450 /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 146834041AC3E56700842450 /* libReact.a */; };
 		5E9157361DD0AC6A00FF2AA8 /* libRCTAnimation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E9157331DD0AC6500FF2AA8 /* libRCTAnimation.a */; };
 		832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 832341B51AAA6A8300B99B32 /* libRCTText.a */; };
+		AA6890431F3272F000E1672E /* EvilIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = AA6890421F3272F000E1672E /* EvilIcons.ttf */; };
 		AA775EEC1F2A2FB200AEECE4 /* libRNRandomBytes.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AA2891DD1F2943B600460E80 /* libRNRandomBytes.a */; };
 /* End PBXBuildFile section */
 
@@ -245,6 +246,7 @@
 		78C398B01ACF4ADC00677621 /* RCTLinking.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTLinking.xcodeproj; path = "../node_modules/react-native/Libraries/LinkingIOS/RCTLinking.xcodeproj"; sourceTree = "<group>"; };
 		832341B01AAA6A8300B99B32 /* RCTText.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTText.xcodeproj; path = "../node_modules/react-native/Libraries/Text/RCTText.xcodeproj"; sourceTree = "<group>"; };
 		AA2891D81F2943B600460E80 /* RNRandomBytes.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RNRandomBytes.xcodeproj; path = "../node_modules/react-native-randombytes/RNRandomBytes.xcodeproj"; sourceTree = "<group>"; };
+		AA6890421F3272F000E1672E /* EvilIcons.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = EvilIcons.ttf; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -333,6 +335,7 @@
 		13B07FAE1A68108700A75B9A /* walletrn */ = {
 			isa = PBXGroup;
 			children = (
+				AA6890221F32700200E1672E /* Assets */,
 				008F07F21AC5B25A0029DE68 /* main.jsbundle */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.m */,
@@ -432,6 +435,22 @@
 				AA2891DD1F2943B600460E80 /* libRNRandomBytes.a */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		AA6890221F32700200E1672E /* Assets */ = {
+			isa = PBXGroup;
+			children = (
+				AA68903F1F32702500E1672E /* Fonts */,
+			);
+			name = Assets;
+			sourceTree = "<group>";
+		};
+		AA68903F1F32702500E1672E /* Fonts */ = {
+			isa = PBXGroup;
+			children = (
+				AA6890421F3272F000E1672E /* EvilIcons.ttf */,
+			);
+			name = Fonts;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -742,6 +761,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
+				AA6890431F3272F000E1672E /* EvilIcons.ttf in Resources */,
 				13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
