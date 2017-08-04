@@ -1,6 +1,7 @@
 # wallet-rn
 
 ## Tasks
+* Fix production build bug annotated in `config/globals.js`.
 * Store addresses, keys, etc. Send and receive transactions.
 * Fork `react-native-bitcoinjs-lib` and `react-native-bip39` myself. I will control it (more secure) and I can update `bitcoinjs-lib` to support things like Segwit.
 * Support multiple coins

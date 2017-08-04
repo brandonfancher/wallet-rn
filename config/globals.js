@@ -3,7 +3,10 @@
 // Inject node globals into React Native global scope.
 global.Buffer = require('buffer').Buffer;
 global.process = require('process');
+
+// BUG: This next line errors out when building in Production, preventing build entirely. Do we even need it?
 process.env.NODE_ENV = __DEV__ ? 'development' : 'production';
+
 process.browser = false;
 process.version = 'v8.1.4';
 
