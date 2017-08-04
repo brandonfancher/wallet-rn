@@ -1,18 +1,21 @@
 import React from 'react';
 import { Dimensions, ScrollView, Text, View, StyleSheet } from 'react-native';
+import { AccentButton } from './components';
 import PropTypes from 'prop-types';
 const { height, width } = Dimensions.get('window');
+import CONSTANTS from './constants';
 
 
 export default class CoinDetail extends React.Component {
 
   static propTypes = {
-    backgroundColor: PropTypes.string.isRequired,
+    colorScheme: PropTypes.string.isRequired,
     coin: PropTypes.string.isRequired,
   };
 
   render() {
-    const { backgroundColor, coin, test } = this.props;
+    const { colorScheme, coin, test } = this.props;
+    const colors = CONSTANTS.COLORSCHEMES[colorScheme];
     return (
       <ScrollView
         directionalLockEnabled
@@ -20,7 +23,7 @@ export default class CoinDetail extends React.Component {
         pagingEnabled
         ref={ref => this.scrollView = ref}
         showsVerticalScrollIndicator={false}
-        style={{ backgroundColor }}
+        style={{ backgroundColor: colors.background }}
         scrollsToTop={false}
       >
         <View style={styles.sectionView}>
@@ -29,6 +32,9 @@ export default class CoinDetail extends React.Component {
 
         <View style={styles.sectionView}>
           <Text style={styles.placeholderText}>{coin}</Text>
+          <View style={{ position: 'absolute', bottom: 32 }}>
+            <AccentButton label="View More" color={colors.primary} />
+          </View>
         </View>
 
         <View style={styles.sectionView}>

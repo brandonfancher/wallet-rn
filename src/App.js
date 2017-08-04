@@ -1,29 +1,14 @@
 import React, { PureComponent } from 'react';
-import { Dimensions, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { TabViewAnimated, TabBar, SceneMap } from 'react-native-tab-view';
+import { Dimensions, StatusBar, StyleSheet, View } from 'react-native';
+import { TabViewAnimated, SceneMap } from 'react-native-tab-view';
 import Drawer from 'react-native-drawer';
 import CoinDetail from './CoinDetail';
-import { UserButton } from './components';
-import Icon from 'react-native-vector-icons/EvilIcons';
+import { PreferencesDrawer, UserButton } from './components';
 const { height, width } = Dimensions.get('window');
 
 
-const UserDrawer = ({ closeDrawer }) => (
-  <TouchableOpacity
-    activeOpacity={1}
-    style={[styles.container, {
-      backgroundColor: 'blue',
-      height: height,
-      justifyContent: 'center',
-      alignItems: 'center',
-    }]}
-    onPress={closeDrawer}
-  >
-    <Text style={{ color: 'white', fontSize: 40 }}>Profile</Text>
-  </TouchableOpacity>
-);
-
 export default class SlideView extends PureComponent {
+// export default class SlideView extends React.Component {
 
   state = {
     index: 1,
@@ -46,7 +31,7 @@ export default class SlideView extends PureComponent {
     '1': ({ route }) => (
       <CoinDetail
         ref={ref => this.dash = ref}
-        backgroundColor="#55bbeb"
+        colorScheme="dash"
         coin="Dash"
         route={route}
         currentRouteIndex={this.state.index}
@@ -55,7 +40,7 @@ export default class SlideView extends PureComponent {
     '2': ({ route }) => (
       <CoinDetail
         ref={ref => this.bitcoin = ref}
-        backgroundColor="#06b07d"
+        colorScheme="bitcoin"
         coin="Bitcoin"
         route={route}
         currentRouteIndex={this.state.index}
@@ -64,7 +49,7 @@ export default class SlideView extends PureComponent {
     '3': ({ route }) => (
       <CoinDetail
         ref={ref => this.litecoin = ref}
-        backgroundColor="#ffe14d"
+        colorScheme="litecoin"
         coin="Litecoin"
         route={route}
         currentRouteIndex={this.state.index}
@@ -72,13 +57,21 @@ export default class SlideView extends PureComponent {
     ),
   });
 
-  closeDrawer = () => this._drawer.close();
-  openDrawer = () => this._drawer.open();
+  closeDrawer = () => {
+    this._drawer.close();
+    StatusBar.setBarStyle('light-content', true);
+  };
+
+  openDrawer = () => {
+    this._drawer.open();
+    StatusBar.setBarStyle('dark-content', true);
+  }
 
   render() {
     return (
       <Drawer
-        content={<UserDrawer closeDrawer={this.closeDrawer} />}
+        captureGestures={false}
+        content={<PreferencesDrawer closeDrawer={this.closeDrawer} />}
         ref={ref => this._drawer = ref}
         side="right"
         type="overlay"
