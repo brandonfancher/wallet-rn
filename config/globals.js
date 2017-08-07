@@ -5,6 +5,7 @@ global.Buffer = require('buffer').Buffer;
 global.process = require('process');
 
 // BUG: This next line errors out when building in Production, preventing build entirely. Do we even need it?
+// https://github.com/babel/babel.github.io/issues/847
 process.env.NODE_ENV = __DEV__ ? 'development' : 'production';
 
 process.browser = false;

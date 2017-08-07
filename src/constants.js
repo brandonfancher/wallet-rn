@@ -1,6 +1,9 @@
 const COLORS = {
   blackText: '#333',
   navIcon: '#555',
+  background: '#f5f5f5',
+  grayText: '#999',
+
   blueBackground: '#1681f9',
   bluePrimary: '#0d59c3',
   borderColor: '#eee',
@@ -8,6 +11,7 @@ const COLORS = {
   greenPrimary: '#0bb634',
   purpleBackground: '#7118b2',
   purplePrimary: '#ab01f8',
+
   oldBlue: '#55bbeb',
   oldYellow: '#ffe14d',
 };
