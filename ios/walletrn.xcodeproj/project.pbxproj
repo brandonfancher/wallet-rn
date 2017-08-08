@@ -22,6 +22,7 @@
 		146834051AC3E58100842450 /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 146834041AC3E56700842450 /* libReact.a */; };
 		5E9157361DD0AC6A00FF2AA8 /* libRCTAnimation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E9157331DD0AC6500FF2AA8 /* libRCTAnimation.a */; };
 		832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 832341B51AAA6A8300B99B32 /* libRCTText.a */; };
+		AA4DBF121F39E1C7004196B4 /* cryptocoins-icons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = AA4DBF111F39E1C7004196B4 /* cryptocoins-icons.ttf */; };
 		AA6890431F3272F000E1672E /* EvilIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = AA6890421F3272F000E1672E /* EvilIcons.ttf */; };
 		AA775EEC1F2A2FB200AEECE4 /* libRNRandomBytes.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AA2891DD1F2943B600460E80 /* libRNRandomBytes.a */; };
 /* End PBXBuildFile section */
@@ -246,6 +247,7 @@
 		78C398B01ACF4ADC00677621 /* RCTLinking.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTLinking.xcodeproj; path = "../node_modules/react-native/Libraries/LinkingIOS/RCTLinking.xcodeproj"; sourceTree = "<group>"; };
 		832341B01AAA6A8300B99B32 /* RCTText.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTText.xcodeproj; path = "../node_modules/react-native/Libraries/Text/RCTText.xcodeproj"; sourceTree = "<group>"; };
 		AA2891D81F2943B600460E80 /* RNRandomBytes.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RNRandomBytes.xcodeproj; path = "../node_modules/react-native-randombytes/RNRandomBytes.xcodeproj"; sourceTree = "<group>"; };
+		AA4DBF111F39E1C7004196B4 /* cryptocoins-icons.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "cryptocoins-icons.ttf"; sourceTree = "<group>"; };
 		AA6890421F3272F000E1672E /* EvilIcons.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = EvilIcons.ttf; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -448,6 +450,7 @@
 		AA68903F1F32702500E1672E /* Fonts */ = {
 			isa = PBXGroup;
 			children = (
+				AA4DBF111F39E1C7004196B4 /* cryptocoins-icons.ttf */,
 				AA6890421F3272F000E1672E /* EvilIcons.ttf */,
 			);
 			name = Fonts;
@@ -763,6 +766,7 @@
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				AA6890431F3272F000E1672E /* EvilIcons.ttf in Resources */,
 				13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */,
+				AA4DBF121F39E1C7004196B4 /* cryptocoins-icons.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

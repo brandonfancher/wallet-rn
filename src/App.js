@@ -2,6 +2,7 @@ import React, { PureComponent } from 'react';
 import { Dimensions, StatusBar, StyleSheet, View } from 'react-native';
 import { TabViewAnimated, SceneMap } from 'react-native-tab-view';
 import Drawer from 'react-native-drawer';
+import BitcoinDetail from './BitcoinDetail';
 import CoinDetail from './CoinDetail';
 import { PreferencesDrawer, UserButton } from './components';
 const { height, width } = Dimensions.get('window');
@@ -38,7 +39,7 @@ export default class SlideView extends PureComponent {
       />
     ),
     '2': ({ route }) => (
-      <CoinDetail
+      <BitcoinDetail
         ref={ref => this.bitcoin = ref}
         colorScheme="bitcoin"
         coin="Bitcoin"

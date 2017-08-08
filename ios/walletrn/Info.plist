@@ -46,6 +46,7 @@
 	<string></string>
 	<key>UIAppFonts</key>
 	<array>
+		<string>cryptocoins-icons.ttf</string>
 		<string>EvilIcons.ttf</string>
 	</array>
 	<key>UILaunchStoryboardName</key>

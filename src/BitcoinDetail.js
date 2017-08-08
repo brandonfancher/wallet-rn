@@ -6,7 +6,9 @@ const { height, width } = Dimensions.get('window');
 import CONSTANTS from './constants';
 
 
-export default class CoinDetail extends React.Component {
+// TODO: This will likely need to merge back into the CoinDetail component.
+// Only separated it out for dev purposes, focusing on Bitcoin first.
+export default class BitcoinDetail extends React.Component {
 
   static propTypes = {
     colorScheme: PropTypes.string.isRequired,
@@ -14,7 +16,7 @@ export default class CoinDetail extends React.Component {
   };
 
   render() {
-    const { colorScheme, coin, test } = this.props;
+    const { colorScheme, coin } = this.props;
     const colors = CONSTANTS.COLORSCHEMES[colorScheme];
     return (
       <ScrollView
@@ -36,7 +38,7 @@ export default class CoinDetail extends React.Component {
           </View>
 
           <View>
-            <CryptoIcon name={coin.toLowerCase()} size={72} color="white" />
+            <CryptoIcon name="bitcoin" size={72} color="white" />
           </View>
 
           <View style={{ position: 'absolute', bottom: 32 }}>

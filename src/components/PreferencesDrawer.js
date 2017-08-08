@@ -12,14 +12,17 @@ const PreferencesDrawer = ({ closeDrawer }) => (
 
       <H2>Backup Phrase</H2>
       <View style={[styles.bodyGroup, styles.centerContents]}>
-        <Text style={styles.backupPhrase}>
+        <Text style={[styles.p, styles.textCenter]}>
           {process.env.TEST_MNEMONIC ? process.env.MNEMONIC : ''}
         </Text>
       </View>
 
       <H2>Development</H2>
-      <View style={[styles.bodyGroup, styles.centerContents]}>
-
+      <View style={[styles.bodyGroup, styles.contents]}>
+        <Text style={styles.p}>
+          <Text style={styles.bold}>Wallet Name: </Text>
+          <Text>Test</Text>
+        </Text>
       </View>
     </ScrollView>
   </View>
@@ -39,6 +42,9 @@ const styles = StyleSheet.create({
     height: 80,
     paddingHorizontal: 20,
   },
+  contents: {
+    justifyContent: 'center',
+  },
   centerContents: {
     justifyContent: 'center',
     alignItems: 'center',
@@ -46,10 +52,15 @@ const styles = StyleSheet.create({
   scrollView: {
     backgroundColor: CONSTANTS.COLORS.background,
   },
-  backupPhrase: {
+  p: {
     color: CONSTANTS.COLORS.blackText,
     fontSize: 18,
+  },
+  textCenter: {
     textAlign: 'center',
+  },
+  bold: {
+    fontWeight: '500',
   },
 });
 
