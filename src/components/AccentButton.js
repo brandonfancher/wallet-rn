@@ -3,19 +3,25 @@ import PropTypes from 'prop-types';
 import { StyleSheet, Text, TouchableOpacity } from 'react-native';
 
 
-const AccentButton = ({ color, label }) => (
-  <TouchableOpacity
-    hitSlop={{ top: 10, bottom: 10, left: 10, right: 10}}
-    style={[styles.accentButtonContainer, { backgroundColor: color }]}
-  >
-    <Text style={styles.labelText}>{label}</Text>
-  </TouchableOpacity>
-);
+export default class AccentButton extends React.Component {
 
-AccentButton.propTypes = {
-  color: PropTypes.string.isRequired,
-  label: PropTypes.string.isRequired,
-};
+  static propTypes = {
+    color: PropTypes.string.isRequired,
+    label: PropTypes.string.isRequired,
+  };
+
+  render() {
+    const { color, label } = this.props;
+    return (
+      <TouchableOpacity
+        hitSlop={{ top: 10, bottom: 10, left: 10, right: 10}}
+        style={[styles.accentButtonContainer, { backgroundColor: color }]}
+      >
+        <Text style={styles.labelText}>{label}</Text>
+      </TouchableOpacity>
+    );
+  }
+}
 
 const styles = StyleSheet.create({
   accentButtonContainer: {
@@ -28,9 +34,7 @@ const styles = StyleSheet.create({
   },
   labelText: {
     color: 'white',
-    fontSize: 20,
+    fontSize: 16,
     fontWeight: 'bold',
   },
 });
-
-export default AccentButton;

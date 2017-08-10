@@ -9,7 +9,6 @@ const { height, width } = Dimensions.get('window');
 
 
 export default class SlideView extends PureComponent {
-// export default class SlideView extends React.Component {
 
   state = {
     index: 1,

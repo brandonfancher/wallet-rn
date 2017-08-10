@@ -37,8 +37,12 @@ export default class BitcoinDetail extends React.Component {
             <Text style={styles.placeholderText}>{coin}</Text>
           </View>
 
-          <View>
-            <CryptoIcon name="bitcoin" size={72} color="white" />
+          <View style={{ flexDirection: 'row' }}>
+            <Text style={{ color: 'white' }} adjustsFontSizeToFit>
+              <CryptoIcon name="bitcoin" size={52} color="white" />
+              <Text style={{ color: 'white', fontSize: 108 }}>1500</Text>
+              <Text style={{ color: 'white', fontSize: 52 }}>00342</Text>
+            </Text>
           </View>
 
           <View style={{ position: 'absolute', bottom: 32 }}>
@@ -66,6 +70,10 @@ const styles = StyleSheet.create({
   },
   placeholderText: {
     color: 'white',
-    fontSize: 32,
+    fontSize: 26,
+  },
+  balanceText: {
+    color: 'white',
+    fontSize: 108,
   },
 });

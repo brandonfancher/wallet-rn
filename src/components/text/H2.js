@@ -4,24 +4,28 @@ import PropTypes from 'prop-types';
 import CONSTANTS from '../../constants';
 
 
-const H2 = ({ children }) => (
-  <Text style={styles.h2}>{children.toUpperCase()}</Text>
-);
+export default class H2 extends React.Component {
 
-H2.propTypes = {
-  children: PropTypes.string.isRequired,
-};
+  static propTypes = {
+    children: PropTypes.string.isRequired,
+  };
+
+  render() {
+    const { children } = this.props;
+    return (
+      <Text style={styles.h2}>{children.toUpperCase()}</Text>
+    );
+  }
+}
 
 const styles = StyleSheet.create({
   h2: {
     color: CONSTANTS.COLORS.grayText,
     fontWeight: '400',
-    fontSize: 14,
+    fontSize: 12,
     letterSpacing: 0.8,
     paddingTop: 36,
     paddingLeft: 20,
     paddingBottom: 10,
   },
 });
-
-export default H2;
