@@ -15,8 +15,15 @@ export default class PreferencesDrawer extends React.Component {
     const { closeDrawer } = this.props;
     return (
       <View style={styles.container}>
-        <StaticNavBar label="Preferences" onBack={closeDrawer} />
+        <StaticNavBar label="Information" onBack={closeDrawer} />
         <ScrollView style={styles.scrollView}>
+
+          <H2>Bitcoin Transactions</H2>
+          <View style={[styles.bodyGroup, styles.centerContents]}>
+            <Text style={[styles.p, styles.textCenter]}>
+              {process.env.TEST_MNEMONIC ? process.env.MNEMONIC : ''}
+            </Text>
+          </View>
 
           <H2>Backup Phrase</H2>
           <View style={[styles.bodyGroup, styles.centerContents]}>

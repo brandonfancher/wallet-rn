@@ -7,6 +7,11 @@ import CoinDetail from './CoinDetail';
 import { PreferencesDrawer, UserButton } from './components';
 const { height, width } = Dimensions.get('window');
 
+import io from 'socket.io-client';
+import feathers from 'feathers/client';
+import hooks from 'feathers-hooks';
+import socketio from 'feathers-socketio/client';
+
 
 export default class SlideView extends PureComponent {
 
@@ -17,7 +22,29 @@ export default class SlideView extends PureComponent {
       { key: '2', name: 'bitcoin' },
       { key: '3', name: 'litecoin' },
     ],
+    balanceBTC: 0,
   };
+
+  constructor() {
+    super();
+    const options = { transports: ['websocket'], pingTimeout: 3000, pingInterval: 5000 };
+    console.log('API URL: ', process.env.API_URL);
+    this.socket = io(process.env.API_URL, options);
+
+    this.app = feathers()
+      .configure(socketio(this.socket))
+      .configure(hooks());
+
+    this.socket.emit('hd-wallet::get', process.env.WALLET_NAME, { tx_detail: 'concise' }, (error, message) => {
+      console.log('Response: ', message);
+      this.setState({ balanceBTC: message.balance });
+    });
+
+    // this.app.service('block').on('created', newBlock => {
+    //   console.log(newBlock);
+    //   this.setState({ blocks: [...this.state.blocks, newBlock] })
+    // });
+  }
 
   _handleIndexChange = (index) => {
     const { routes } = this.state;
@@ -27,35 +54,43 @@ export default class SlideView extends PureComponent {
     this[routeName].scrollView.scrollTo({ y: height + 1 });
   };
 
-  _renderScene = SceneMap({
-    '1': ({ route }) => (
-      <CoinDetail
-        ref={ref => this.dash = ref}
-        colorScheme="dash"
-        coin="Dash"
-        route={route}
-        currentRouteIndex={this.state.index}
-      />
-    ),
-    '2': ({ route }) => (
-      <BitcoinDetail
-        ref={ref => this.bitcoin = ref}
-        colorScheme="bitcoin"
-        coin="Bitcoin"
-        route={route}
-        currentRouteIndex={this.state.index}
-      />
-    ),
-    '3': ({ route }) => (
-      <CoinDetail
-        ref={ref => this.litecoin = ref}
-        colorScheme="litecoin"
-        coin="Litecoin"
-        route={route}
-        currentRouteIndex={this.state.index}
-      />
-    ),
-  });
+  _renderScene = ({ route }) => {
+    switch (route.key) {
+      case '1':
+        return (
+          <CoinDetail
+            ref={ref => this.dash = ref}
+            colorScheme="dash"
+            coin="Dash"
+            route={route}
+            currentRouteIndex={this.state.index}
+          />
+        );
+      case '2':
+        return (
+          <BitcoinDetail
+            ref={ref => this.bitcoin = ref}
+            colorScheme="bitcoin"
+            coin="Bitcoin"
+            route={route}
+            currentRouteIndex={this.state.index}
+            balanceBTC={this.state.balanceBTC}
+          />
+        );
+      case '3':
+        return (
+          <CoinDetail
+            ref={ref => this.litecoin = ref}
+            colorScheme="litecoin"
+            coin="Litecoin"
+            route={route}
+            currentRouteIndex={this.state.index}
+          />
+        );
+      default:
+        return null;
+    }
+  };
 
   closeDrawer = () => {
     this._drawer.close();
