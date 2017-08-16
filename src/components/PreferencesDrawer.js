@@ -1,6 +1,7 @@
 import React from 'react';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Linking, ScrollView, StyleSheet, Text, View } from 'react-native';
 import PropTypes from 'prop-types';
+import moment from 'moment';
 import { H2, StaticNavBar } from './';
 import CONSTANTS from '../constants';
 
@@ -9,21 +10,36 @@ export default class PreferencesDrawer extends React.Component {
 
   static propTypes = {
     closeDrawer: PropTypes.func.isRequired,
+    transactionsBTC: PropTypes.array.isRequired,
   };
 
+  openTransactionLink = (url) => {
+    Linking.openURL(url).catch(err => console.error('An error occurred', err));
+  }
+
   render() {
-    const { closeDrawer } = this.props;
+    const { closeDrawer, transactionsBTC } = this.props;
+    console.log('Transactions:', transactionsBTC);
     return (
       <View style={styles.container}>
         <StaticNavBar label="Information" onBack={closeDrawer} />
         <ScrollView style={styles.scrollView}>
 
           <H2>Bitcoin Transactions</H2>
-          <View style={[styles.bodyGroup, styles.centerContents]}>
-            <Text style={[styles.p, styles.textCenter]}>
-              {process.env.TEST_MNEMONIC ? process.env.MNEMONIC : ''}
-            </Text>
-          </View>
+          {transactionsBTC.map(t => (
+            <View
+              key={t.tx_hash}
+              style={[styles.bodyGroup, styles.centerContents, styles.borderBottom]}
+            >
+              <Text>Amount: {(t.value / 100000000)} BTC</Text>
+              {t.confirmed
+                ? <Text>Confirmed: {moment(t.confirmed).format('llll')}</Text>
+                : <Text>Confirmations: {t.confirmations}</Text>
+              }
+              <Text>Received From: {}</Text>
+              <Text onPress={() => this.openTransactionLink(`https://live.blockcypher.com/bcy/tx/${t.tx_hash}/`)}>View Transaction Details</Text>
+            </View>
+          ))}
 
           <H2>Backup Phrase</H2>
           <View style={[styles.bodyGroup, styles.centerContents]}>
@@ -74,5 +90,10 @@ const styles = StyleSheet.create({
   },
   bold: {
     fontWeight: '500',
+  },
+  borderBottom: {
+    borderBottomWidth: 1,
+    borderBottomColor: CONSTANTS.COLORS.borderColor,
+    borderStyle: 'solid',
   },
 });

@@ -21,6 +21,7 @@
     "feathers": "2.1.4",
     "feathers-hooks": "2.0.2",
     "feathers-socketio": "2.0.0",
+    "moment": "2.18.1",
     "node-libs-browser": "2.0.0",
     "pbkdf2": "3.0.8",
     "prop-types": "15.5.10",

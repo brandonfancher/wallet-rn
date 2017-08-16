@@ -23,6 +23,7 @@ export default class SlideView extends PureComponent {
       { key: '3', name: 'litecoin' },
     ],
     balanceBTC: 0,
+    transactionsBTC: [],
   };
 
   constructor() {
@@ -37,7 +38,10 @@ export default class SlideView extends PureComponent {
 
     this.socket.emit('hd-wallet::get', process.env.WALLET_NAME, { tx_detail: 'concise' }, (error, message) => {
       console.log('Response: ', message);
-      this.setState({ balanceBTC: message.balance });
+      this.setState({
+        balanceBTC: message.balance,
+        transactionsBTC: message.txrefs,
+      });
     });
 
     // this.app.service('block').on('created', newBlock => {
@@ -103,10 +107,11 @@ export default class SlideView extends PureComponent {
   }
 
   render() {
+    const { transactionsBTC } = this.state;
     return (
       <Drawer
         captureGestures={false}
-        content={<PreferencesDrawer closeDrawer={this.closeDrawer} />}
+        content={<PreferencesDrawer transactionsBTC={transactionsBTC} closeDrawer={this.closeDrawer} />}
         ref={ref => this._drawer = ref}
         side="right"
         type="overlay"
