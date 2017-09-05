@@ -36,18 +36,38 @@ export default class SlideView extends PureComponent {
       .configure(socketio(this.socket))
       .configure(hooks());
 
-    this.socket.emit('hd-wallet::get', process.env.WALLET_NAME, { tx_detail: 'concise' }, (error, message) => {
-      console.log('Response: ', message);
+    this.getWalletInfo('concise', (message) => {
+      console.log('Wallet Info: ', message);
       this.setState({
         balanceBTC: message.balance,
         transactionsBTC: message.txrefs,
       });
     });
 
-    // this.app.service('block').on('created', newBlock => {
-    //   console.log(newBlock);
-    //   this.setState({ blocks: [...this.state.blocks, newBlock] })
+    // this.socket.emit('webhook::create', { type: 'tx-confirmation' }, (error, message) => {
+    //   console.log('Response: ', message);
     // });
+
+    this.app.service('confirmation').on('created', event => {
+      console.log('Event: ', event);
+      this.getWalletInfo('concise', (message) => {
+        console.log('Updating Balance: ', message.balance);
+        this.setState({
+          balanceBTC: message.balance,
+          transactionsBTC: message.txrefs,
+        });
+      });
+    });
+  }
+
+  getWalletInfo = (detail, cb) => {
+    this.socket.emit('hd-wallet::get', process.env.WALLET_NAME, { tx_detail: detail }, (error, message) => {
+      if (error) {
+        console.error('Error getting wallet info: ', error);
+      } else {
+        cb(message);
+      }
+    });
   }
 
   _handleIndexChange = (index) => {
@@ -59,6 +79,7 @@ export default class SlideView extends PureComponent {
   };
 
   _renderScene = ({ route }) => {
+    const { index, balanceBTC, transactionsBTC } = this.state;
     switch (route.key) {
       case '1':
         return (
@@ -67,7 +88,7 @@ export default class SlideView extends PureComponent {
             colorScheme="dash"
             coin="Dash"
             route={route}
-            currentRouteIndex={this.state.index}
+            currentRouteIndex={index}
           />
         );
       case '2':
@@ -77,8 +98,10 @@ export default class SlideView extends PureComponent {
             colorScheme="bitcoin"
             coin="Bitcoin"
             route={route}
-            currentRouteIndex={this.state.index}
-            balanceBTC={this.state.balanceBTC}
+            currentRouteIndex={index}
+            balanceBTC={balanceBTC}
+            openDrawer={this.openDrawer}
+            transactionsBTC={transactionsBTC}
           />
         );
       case '3':
@@ -88,7 +111,7 @@ export default class SlideView extends PureComponent {
             colorScheme="litecoin"
             coin="Litecoin"
             route={route}
-            currentRouteIndex={this.state.index}
+            currentRouteIndex={index}
           />
         );
       default:

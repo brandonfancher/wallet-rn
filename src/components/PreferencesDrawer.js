@@ -26,18 +26,18 @@ export default class PreferencesDrawer extends React.Component {
         <ScrollView style={styles.scrollView}>
 
           <H2>Bitcoin Transactions</H2>
-          {transactionsBTC.map(t => (
+          {transactionsBTC.map(tx => (
             <View
-              key={t.tx_hash}
+              key={tx.tx_hash}
               style={[styles.bodyGroup, styles.centerContents, styles.borderBottom]}
             >
-              <Text>Amount: {(t.value / 100000000)} BTC</Text>
-              {t.confirmed
-                ? <Text>Confirmed: {moment(t.confirmed).format('llll')}</Text>
-                : <Text>Confirmations: {t.confirmations}</Text>
+              <Text>Amount: {(tx.value / 100000000)} BTC</Text>
+              {tx.confirmed
+                ? <Text>Confirmed: {moment(tx.confirmed).format('llll')}</Text>
+                : <Text>Confirmations: {tx.confirmations}</Text>
               }
               <Text>Received From: {}</Text>
-              <Text onPress={() => this.openTransactionLink(`https://live.blockcypher.com/bcy/tx/${t.tx_hash}/`)}>View Transaction Details</Text>
+              <Text onPress={() => this.openTransactionLink(`https://live.blockcypher.com/bcy/tx/${tx.tx_hash}/`)}>View Transaction Details</Text>
             </View>
           ))}
 

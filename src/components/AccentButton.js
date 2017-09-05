@@ -8,13 +8,15 @@ export default class AccentButton extends React.Component {
   static propTypes = {
     color: PropTypes.string.isRequired,
     label: PropTypes.string.isRequired,
+    onPress: PropTypes.func,
   };
 
   render() {
-    const { color, label } = this.props;
+    const { color, label, onPress } = this.props;
     return (
       <TouchableOpacity
         hitSlop={{ top: 10, bottom: 10, left: 10, right: 10}}
+        onPress={onPress}
         style={[styles.accentButtonContainer, { backgroundColor: color }]}
       >
         <Text style={styles.labelText}>{label}</Text>

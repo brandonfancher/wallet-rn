@@ -1,5 +1,6 @@
 import React from 'react';
 import { Dimensions, ScrollView, Text, View, StyleSheet } from 'react-native';
+import moment from 'moment';
 import { AccentButton, CryptoIcon } from './components';
 import PropTypes from 'prop-types';
 const { height, width } = Dimensions.get('window');
@@ -14,14 +15,18 @@ export default class BitcoinDetail extends React.Component {
     balanceBTC: PropTypes.number.isRequired,
     colorScheme: PropTypes.string.isRequired,
     coin: PropTypes.string.isRequired,
+    openDrawer: PropTypes.func.isRequired,
+    transactionsBTC: PropTypes.array.isRequired,
   };
 
   render() {
-    const { balanceBTC, colorScheme, coin } = this.props;
+    const { balanceBTC, colorScheme, coin, openDrawer, transactionsBTC } = this.props;
     const colors = CONSTANTS.COLORSCHEMES[colorScheme];
     const charBTC = '';
+    const numRecentTransactions = 5;
     return (
       <ScrollView
+        contentContainerStyle={{ height: 4 * height, marginHorizontal: 12 }}
         directionalLockEnabled
         onContentSizeChange={(w, h) => this.scrollView.scrollTo({ y: height + 1, animated: false })}
         pagingEnabled
@@ -35,20 +40,35 @@ export default class BitcoinDetail extends React.Component {
         </View>
 
         <View style={styles.sectionView}>
-          <View style={{ flex: 1, justifyContent: 'center' }}>
-            <CryptoIcon name="bitcoin-alt" size={82} color="white" />
+          <View style={{ flex: 2, justifyContent: 'center' }}>
+            <CryptoIcon name="bitcoin-alt" size={82} color="white" style={{ marginTop: 50 }} />
           </View>
 
-          <View style={{ flex: 1, flexDirection: 'row', alignItems: 'flex-start' }}>
-            <View style={{ width: '94%', height: 200 }}>
-              <Text style={{ color: 'white', textAlign: 'center', fontSize: 200, height: '100%' }} numberOfLines={1} adjustsFontSizeToFit>
-                {(balanceBTC / 100000000).toFixed(8)}
-              </Text>
-            </View>
+          <View style={{ flex: 1, justifyContent: 'center', alignSelf: 'stretch', alignItems: 'stretch' }}>
+            <Text style={{ color: 'white', fontSize: 200, height: '100%', textAlign: 'center' }} numberOfLines={1} adjustsFontSizeToFit>
+              {(balanceBTC / 100000000).toFixed(8)}
+            </Text>
           </View>
 
-          <View style={{ position: 'absolute', bottom: 32 }}>
-            <AccentButton label="View More" color={colors.primary} />
+          <View style={{ flex: 1, alignSelf: 'stretch', alignItems: 'stretch' }}>
+            {transactionsBTC.slice(0, numRecentTransactions).map((tx, i) => (
+              <View
+                key={tx.tx_hash}
+                style={[styles.bodyGroup, i !== numRecentTransactions - 1 ? { borderBottomWidth: 0 } : null]}
+              >
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                  <Text style={{ color: 'white'}}>{(tx.value / 100000000)} BTC</Text>
+                  {tx.confirmed
+                    ? <Text style={{ color: 'white'}}>{moment(tx.confirmed).format('llll')}</Text>
+                    : <Text style={{ color: 'white'}}>{tx.confirmations} Confirmations</Text>
+                  }
+                </View>
+              </View>
+            ))}
+          </View>
+
+          <View style={{ marginVertical: 32 }}>
+            <AccentButton label="View More" color={colors.primary} onPress={openDrawer} />
           </View>
         </View>
 
@@ -66,16 +86,25 @@ export default class BitcoinDetail extends React.Component {
 
 const styles = StyleSheet.create({
   sectionView: {
-    height: height,
+    flex: 1,
+    // height: height,
     justifyContent: 'center',
     alignItems: 'center',
   },
   placeholderText: {
     color: 'white',
-    fontSize: 26,
+    fontSize: 32,
   },
   balanceText: {
     color: 'white',
     fontSize: 108,
+  },
+  bodyGroup: {
+    borderBottomWidth: 1,
+    borderBottomColor: 'white',
+    borderTopWidth: 1,
+    borderTopColor: 'white',
+    paddingVertical: 6,
+    // height: 80,
   },
 });
