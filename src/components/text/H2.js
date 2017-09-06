@@ -8,12 +8,13 @@ export default class H2 extends React.Component {
 
   static propTypes = {
     children: PropTypes.string.isRequired,
+    style: PropTypes.object,
   };
 
   render() {
-    const { children } = this.props;
+    const { children, style } = this.props;
     return (
-      <Text style={styles.h2}>{children.toUpperCase()}</Text>
+      <Text style={[styles.h2, style]}>{children.toUpperCase()}</Text>
     );
   }
 }

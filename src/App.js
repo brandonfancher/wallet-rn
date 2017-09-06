@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import { Dimensions, StatusBar, StyleSheet, View } from 'react-native';
+import { Dimensions, Linking, StatusBar, StyleSheet, View } from 'react-native';
 import { TabViewAnimated, SceneMap } from 'react-native-tab-view';
 import Drawer from 'react-native-drawer';
 import BitcoinDetail from './BitcoinDetail';
@@ -70,6 +70,10 @@ export default class SlideView extends PureComponent {
     });
   }
 
+  openTransactionLink = (url) => {
+    Linking.openURL(url).catch(err => console.error('An error occurred', err));
+  }
+
   _handleIndexChange = (index) => {
     const { routes } = this.state;
     const routeName = routes[index].name;
@@ -101,6 +105,7 @@ export default class SlideView extends PureComponent {
             currentRouteIndex={index}
             balanceBTC={balanceBTC}
             openDrawer={this.openDrawer}
+            openTransactionLink={this.openTransactionLink}
             transactionsBTC={transactionsBTC}
           />
         );
@@ -134,7 +139,7 @@ export default class SlideView extends PureComponent {
     return (
       <Drawer
         captureGestures={false}
-        content={<PreferencesDrawer transactionsBTC={transactionsBTC} closeDrawer={this.closeDrawer} />}
+        content={<PreferencesDrawer openTransactionLink={this.openTransactionLink} transactionsBTC={transactionsBTC} closeDrawer={this.closeDrawer} />}
         ref={ref => this._drawer = ref}
         side="right"
         type="overlay"

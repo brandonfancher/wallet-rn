@@ -1,5 +1,5 @@
 import React from 'react';
-import { Linking, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import { H2, StaticNavBar } from './';
@@ -10,15 +10,12 @@ export default class PreferencesDrawer extends React.Component {
 
   static propTypes = {
     closeDrawer: PropTypes.func.isRequired,
+    openTransactionLink: PropTypes.func.isRequired,
     transactionsBTC: PropTypes.array.isRequired,
   };
 
-  openTransactionLink = (url) => {
-    Linking.openURL(url).catch(err => console.error('An error occurred', err));
-  }
-
   render() {
-    const { closeDrawer, transactionsBTC } = this.props;
+    const { closeDrawer, openTransactionLink, transactionsBTC } = this.props;
     console.log('Transactions:', transactionsBTC);
     return (
       <View style={styles.container}>
@@ -32,12 +29,10 @@ export default class PreferencesDrawer extends React.Component {
               style={[styles.bodyGroup, styles.centerContents, styles.borderBottom]}
             >
               <Text>Amount: {(tx.value / 100000000)} BTC</Text>
-              {tx.confirmed
-                ? <Text>Confirmed: {moment(tx.confirmed).format('llll')}</Text>
-                : <Text>Confirmations: {tx.confirmations}</Text>
-              }
-              <Text>Received From: {}</Text>
-              <Text onPress={() => this.openTransactionLink(`https://live.blockcypher.com/bcy/tx/${tx.tx_hash}/`)}>View Transaction Details</Text>
+              {tx.confirmed && <Text>Confirmed: {moment(tx.confirmed).format('llll')}</Text>}
+              <Text>Confirmations: {tx.confirmations}</Text>
+              {/* <Text>Received From: {}</Text> */}
+              <Text onPress={() => openTransactionLink(`https://live.blockcypher.com/bcy/tx/${tx.tx_hash}/`)}>Transaction Details</Text>
             </View>
           ))}
 
