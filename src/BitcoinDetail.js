@@ -20,6 +20,10 @@ export default class BitcoinDetail extends React.Component {
     transactionsBTC: PropTypes.array.isRequired,
   };
 
+  static defaultProps = {
+    transactionsBTC: [],
+  };
+
   render() {
     const { balanceBTC, colorScheme, coin, openDrawer, openTransactionLink, transactionsBTC } = this.props;
     const colors = CONSTANTS.COLORSCHEMES[colorScheme];

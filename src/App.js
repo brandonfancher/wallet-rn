@@ -64,7 +64,7 @@ export default class SlideView extends PureComponent {
       });
     });
 
-    this.socket.emit('webhook::create', { type: 'tx-confirmation' }, (error, message) => {
+    this.socket.emit('webhook::create', { type: 'tx-confirmation', walletName: process.env.WALLET_NAME }, (error, message) => {
       console.log('Response: ', message);
     });
 

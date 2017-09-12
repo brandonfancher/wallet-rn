@@ -6,6 +6,7 @@ const generateAddressFromSeed = (mnemonic, path, network = process.env.ASSET_NET
   const seed = bip39.mnemonicToSeed(mnemonic);
   const root = bitcoin.HDNode.fromSeedHex(seed, network);
   const xpub = root.neutered().toBase58();
+  // console.log('xpub: ', xpub);
   return root.derivePath(path).getAddress();
 }
 
@@ -15,5 +16,6 @@ export const generateWalletAddresses = (mnemonic, network) => {
     const address = generateAddressFromSeed(mnemonic, `m/${i}`, network);
     addresses.push(address);
   }
+  // console.log('ADDRESSES: ', addresses);
   return addresses;
 }

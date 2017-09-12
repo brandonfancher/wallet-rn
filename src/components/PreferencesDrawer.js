@@ -14,6 +14,10 @@ export default class PreferencesDrawer extends React.Component {
     transactionsBTC: PropTypes.array.isRequired,
   };
 
+  static defaultProps = {
+    transactionsBTC: [],
+  };
+
   render() {
     const { closeDrawer, openTransactionLink, transactionsBTC } = this.props;
     console.log('Transactions:', transactionsBTC);
