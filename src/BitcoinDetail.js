@@ -25,7 +25,7 @@ export default class BitcoinDetail extends React.Component {
   };
 
   render() {
-    const { balanceBTC, colorScheme, coin, openDrawer, openTransactionLink, transactionsBTC } = this.props;
+    const { balanceBTC, colorScheme, coin, openDrawer, openTransactionLink, sendTestTransaction, transactionsBTC } = this.props;
     const colors = CONSTANTS.COLORSCHEMES[colorScheme];
     const charBTC = '';
     const numRecentTransactions = 3;
@@ -46,7 +46,13 @@ export default class BitcoinDetail extends React.Component {
 
         <View style={styles.sectionView}>
           <View style={{ flex: 1.9, justifyContent: 'center' }}>
-            <CryptoIcon name="bitcoin-alt" size={82} color="white" style={{ marginTop: 50 }} />
+            <CryptoIcon
+              onPress={() => sendTestTransaction('C29ZLvrz9WzBZ2MagUReu475Mr38N2CNza')}
+              name="bitcoin-alt"
+              size={82}
+              color="white"
+              style={{ marginTop: 50 }}
+            />
           </View>
 
           <View style={{ height: 140, justifyContent: 'center', alignSelf: 'stretch', alignItems: 'stretch' }}>
@@ -59,7 +65,7 @@ export default class BitcoinDetail extends React.Component {
             <H2 style={{ color: 'white', paddingTop: 0, paddingLeft: 0 }}>Recent Transactions</H2>
             {transactionsBTC.slice(0, numRecentTransactions).map((tx, i) => (
               <View
-                key={tx.tx_hash}
+                key={`${tx.tx_hash}-${tx.value}`}
                 style={[styles.bodyGroup, i !== numRecentTransactions - 1 ? { borderBottomWidth: 0 } : null]}
               >
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>

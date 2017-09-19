@@ -29,7 +29,7 @@ export default class PreferencesDrawer extends React.Component {
           <H2>Bitcoin Transactions</H2>
           {transactionsBTC.map(tx => (
             <View
-              key={tx.tx_hash}
+              key={`${tx.tx_hash}-${tx.value}`}
               style={[styles.bodyGroup, styles.centerContents, styles.borderBottom]}
             >
               <Text>Amount: {(tx.value / 100000000)} BTC</Text>

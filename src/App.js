@@ -8,6 +8,9 @@ import feathers from 'feathers/client';
 import hooks from 'feathers-hooks';
 import socketio from 'feathers-socketio/client';
 
+import bitcoin from 'react-native-bitcoinjs-lib';
+import bip39 from 'react-native-bip39';
+
 import { generateWalletAddresses } from './helpers/coin';
 
 import BitcoinDetail from './BitcoinDetail';
@@ -94,6 +97,45 @@ export default class SlideView extends PureComponent {
     Linking.openURL(url).catch(err => console.error('An error occurred', err));
   }
 
+  sendTransaction = (toAddress) => {
+    const walletName = process.env.WALLET_NAME;
+    const txPayload = {
+      inputs: [{
+        wallet_name: walletName,
+      }],
+      outputs: [{
+        addresses: [toAddress],
+        value: 100001,
+      }],
+    };
+
+    this.socket.emit('send-transaction::create', txPayload, (error, txToSign) => {
+      const signedTx = this.signTransaction(txToSign);
+      console.log('Signed Transaction: ', signedTx);
+      console.log(this.socket);
+
+      this.socket.emit('send-transaction::create', signedTx, (error, sentTx) => {
+        console.log('Transaction Send Response: ', sentTx);
+      });
+    });
+  }
+
+  signTransaction = (txToSign, network = process.env.ASSET_NETWORK) => {
+    const { mnemonic } = this.state;
+    const seed = bip39.mnemonicToSeed(mnemonic);
+    const root = bitcoin.HDNode.fromSeedHex(seed, process.env.ASSET_NETWORK);
+
+    // signing each of the hex-encoded string required to finalize the transaction
+    txToSign.pubkeys = [];
+    txToSign.signatures = txToSign.tosign.map((tosign, n) => {
+      const pair = root.derivePath(txToSign.tx.inputs[n].hd_path);
+      txToSign.pubkeys.push(pair.getPublicKeyBuffer().toString("hex"));
+      return pair.sign(new Buffer(tosign, "hex")).toDER().toString("hex");
+    });
+
+    return txToSign;
+  }
+
   _handleIndexChange = (index) => {
     const { routes } = this.state;
     const routeName = routes[index].name;
@@ -126,6 +168,7 @@ export default class SlideView extends PureComponent {
             balanceBTC={balanceBTC}
             openDrawer={this.openDrawer}
             openTransactionLink={this.openTransactionLink}
+            sendTestTransaction={this.sendTransaction}
             transactionsBTC={transactionsBTC}
           />
         );
