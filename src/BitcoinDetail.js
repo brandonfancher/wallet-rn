@@ -1,5 +1,6 @@
 import React from 'react';
 import { Dimensions, Linking, ScrollView, Text, View, StyleSheet } from 'react-native';
+import QRCode from 'react-native-qrcode';
 import moment from 'moment';
 import { AccentButton, CryptoIcon, H2 } from './components';
 import PropTypes from 'prop-types';
@@ -32,6 +33,7 @@ export default class BitcoinDetail extends React.Component {
     const charBTC = '';
     const numRecentTransactions = 3;
     const txs = parseTransactions(transactionsBTC, walletAddresses);
+
     return (
       <ScrollView
         contentContainerStyle={{ height: 4 * height, marginHorizontal: 12 }}
@@ -44,6 +46,12 @@ export default class BitcoinDetail extends React.Component {
         scrollsToTop={false}
       >
         <View style={styles.sectionView}>
+          <QRCode
+            bgColor="white"
+            fgColor={CONSTANTS.COLORSCHEMES[colorScheme].background}
+            size={250}
+            value={`bitcoin:${walletAddresses[0]}`}
+          />
           <Text style={styles.placeholderText}>Receive</Text>
         </View>
 
