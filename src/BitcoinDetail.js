@@ -1,9 +1,10 @@
 import React from 'react';
-import { Dimensions, Linking, ScrollView, Text, View, StyleSheet } from 'react-native';
-import QRCode from 'react-native-qrcode';
-import moment from 'moment';
-import { AccentButton, CryptoIcon, H2 } from './components';
+import { AlertIOS, Dimensions, Linking, ScrollView, Text, View, StyleSheet } from 'react-native';
 import PropTypes from 'prop-types';
+import QRCode from 'react-native-qrcode';
+// import Camera from 'react-native-camera';
+import moment from 'moment';
+import { AccentButton, CryptoIcon, H2, QRScan } from './components';
 const { height, width } = Dimensions.get('window');
 import CONSTANTS from './constants';
 import parseTransactions from './helpers/parseTransactions';
@@ -27,8 +28,39 @@ export default class BitcoinDetail extends React.Component {
     transactionsBTC: [],
   };
 
+  state = {
+    scanMode: false,
+  };
+
+  _onScanFail = (cb) => {
+    AlertIOS.alert('Oops!', "We didn't quite get that. Check the QR code and try again.", cb);
+  }
+
+  _onScanSuccess = (paymentDetails) => {
+    this.setState({ scanMode: false }, AlertIOS.alert('Booyah!', paymentDetails));
+  }
+
+  _onScanCancel = () => {
+    this.setState({ scanMode: false });
+  }
+
+  scanMode = () => {
+    this.setState({ scanMode: true });
+  }
+
   render() {
-    const { balanceBTC, colorScheme, coin, openDrawer, openTransactionLink, sendTestTransaction, transactionsBTC, walletAddresses } = this.props;
+    const { scanMode } = this.state;
+    const {
+      balanceBTC,
+      colorScheme,
+      coin,
+      openDrawer,
+      openTransactionLink,
+      sendTestTransaction,
+      transactionsBTC,
+      walletAddresses
+    } = this.props;
+
     const colors = CONSTANTS.COLORSCHEMES[colorScheme];
     const charBTC = '';
     const numRecentTransactions = 3;
@@ -36,7 +68,7 @@ export default class BitcoinDetail extends React.Component {
 
     return (
       <ScrollView
-        contentContainerStyle={{ height: 4 * height, marginHorizontal: 12 }}
+        contentContainerStyle={{ height: 3 * height, marginHorizontal: 12 }}
         directionalLockEnabled
         onContentSizeChange={(w, h) => this.scrollView.scrollTo({ y: height + 1, animated: false })}
         pagingEnabled
@@ -98,10 +130,15 @@ export default class BitcoinDetail extends React.Component {
 
         <View style={styles.sectionView}>
           <Text style={styles.placeholderText}>Send</Text>
-        </View>
-
-        <View style={styles.sectionView}>
-          <Text style={styles.placeholderText}>Scan?</Text>
+          <AccentButton label="Scan QR" color={colors.primary} onPress={this.scanMode} />
+          {scanMode && (
+            <QRScan
+              colorScheme={colorScheme}
+              onCancel={this._onScanCancel}
+              onFail={this._onScanFail}
+              onSuccess={this._onScanSuccess}
+            />
+          )}
         </View>
       </ScrollView>
     );
