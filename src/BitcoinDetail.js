@@ -5,6 +5,7 @@ import { AccentButton, CryptoIcon, H2 } from './components';
 import PropTypes from 'prop-types';
 const { height, width } = Dimensions.get('window');
 import CONSTANTS from './constants';
+import parseTransactions from './helpers/parseTransactions';
 
 
 // TODO: This will likely need to merge back into the CoinDetail component.
@@ -18,6 +19,7 @@ export default class BitcoinDetail extends React.Component {
     openDrawer: PropTypes.func.isRequired,
     openTransactionLink: PropTypes.func.isRequired,
     transactionsBTC: PropTypes.array.isRequired,
+    walletAddresses: PropTypes.array.isRequired,
   };
 
   static defaultProps = {
@@ -25,10 +27,11 @@ export default class BitcoinDetail extends React.Component {
   };
 
   render() {
-    const { balanceBTC, colorScheme, coin, openDrawer, openTransactionLink, sendTestTransaction, transactionsBTC } = this.props;
+    const { balanceBTC, colorScheme, coin, openDrawer, openTransactionLink, sendTestTransaction, transactionsBTC, walletAddresses } = this.props;
     const colors = CONSTANTS.COLORSCHEMES[colorScheme];
     const charBTC = '';
     const numRecentTransactions = 3;
+    const txs = parseTransactions(transactionsBTC, walletAddresses);
     return (
       <ScrollView
         contentContainerStyle={{ height: 4 * height, marginHorizontal: 12 }}
@@ -63,18 +66,18 @@ export default class BitcoinDetail extends React.Component {
 
           <View style={{ flex: 1.1, alignSelf: 'stretch', alignItems: 'stretch' }}>
             <H2 style={{ color: 'white', paddingTop: 0, paddingLeft: 0 }}>Recent Transactions</H2>
-            {transactionsBTC.slice(0, numRecentTransactions).map((tx, i) => (
+            {txs.slice(0, numRecentTransactions).map((tx, i) => (
               <View
-                key={`${tx.tx_hash}-${tx.value}`}
+                key={`${tx.txHash}-${tx.value}`}
                 style={[styles.bodyGroup, i !== numRecentTransactions - 1 ? { borderBottomWidth: 0 } : null]}
               >
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                  <Text style={{ color: 'white'}}>{(tx.value / 100000000)} BTC</Text>
-                  {tx.confirmed && <Text style={{ color: 'white'}}>{moment(tx.confirmed).format('llll')}</Text>}
+                  <Text style={{ color: 'white'}}>{tx.io === 'INCOMING' ? '+' : '-'}{(tx.value / 100000000)} BTC</Text>
+                  <Text style={{ color: 'white'}}>{moment(tx.receivedTime).format('llll')}</Text>
                 </View>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                  <Text style={{ color: 'white' }}>{tx.confirmations < 7 ? `${tx.confirmations} Confirmations` : 'Confirmed'}</Text>
-                  <Text style={{ color: 'white' }} onPress={() => openTransactionLink(`https://live.blockcypher.com/bcy/tx/${tx.tx_hash}/`)}>Transaction Details</Text>
+                  <Text style={{ color: 'white' }}>{tx.confirmed ? 'Confirmed' : `${tx.confirmations} Confirmations`}</Text>
+                  <Text style={{ color: 'white' }} onPress={() => openTransactionLink(`https://live.blockcypher.com/bcy/tx/${tx.exploreUri}/`)}>Transaction Details</Text>
                 </View>
               </View>
             ))}

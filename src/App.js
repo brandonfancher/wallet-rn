@@ -36,34 +36,35 @@ export default class SlideView extends PureComponent {
   };
 
   componentWillMount = () => {
+    const { mnemonic } = this.state;
     const options = { transports: ['websocket'], pingTimeout: 3000, pingInterval: 5000 };
     console.log('API URL: ', process.env.API_URL);
     this.socket = io(process.env.API_URL, options);
+    const addresses = generateWalletAddresses(mnemonic);
 
     this.app = feathers()
       .configure(socketio(this.socket))
       .configure(hooks());
 
     this.socket.on('connect', () => {
-      const { mnemonic } = this.state;
       console.info('Connecting socket.');
       // This event should give the server something unique so that the server will know which events
       // to send to this particular connection. E.g., the wallet name, an array of addresses to listen
       // for transactions on, etc. That way, the server can filter events for this connected client.
       // Probably a UUID that serves as the wallet name and is stored in some persisted local storage.
 
-      const addresses = generateWalletAddresses(mnemonic);
       this.socket.emit('registerSocket', addresses, (error, message) => {
         console.info('Registering device.');
         console.log('Response: ', message);
       });
     });
 
-    this.getWalletInfo('concise', (message) => {
+    this.getWalletInfo('full', (message) => {
       console.log('Wallet Info: ', message);
       this.setState({
+        addresses,
         balanceBTC: message.balance,
-        transactionsBTC: message.txrefs,
+        transactionsBTC: message.txs,
       });
     });
 
@@ -73,11 +74,11 @@ export default class SlideView extends PureComponent {
 
     this.app.service('confirmation').on('created', event => {
       console.log('Event: ', event);
-      this.getWalletInfo('concise', (message) => {
+      this.getWalletInfo('full', (message) => {
         console.log('Updating Balance: ', message.balance);
         this.setState({
           balanceBTC: message.balance,
-          transactionsBTC: message.txrefs,
+          transactionsBTC: message.txs,
         });
       });
     });
@@ -145,7 +146,7 @@ export default class SlideView extends PureComponent {
   };
 
   _renderScene = ({ route }) => {
-    const { index, balanceBTC, transactionsBTC } = this.state;
+    const { addresses, index, balanceBTC, transactionsBTC } = this.state;
     switch (route.key) {
       case '1':
         return (
@@ -170,6 +171,7 @@ export default class SlideView extends PureComponent {
             openTransactionLink={this.openTransactionLink}
             sendTestTransaction={this.sendTransaction}
             transactionsBTC={transactionsBTC}
+            walletAddresses={addresses}
           />
         );
       case '3':
@@ -198,11 +200,18 @@ export default class SlideView extends PureComponent {
   }
 
   render() {
-    const { transactionsBTC } = this.state;
+    const { addresses, transactionsBTC } = this.state;
     return (
       <Drawer
         captureGestures={false}
-        content={<PreferencesDrawer openTransactionLink={this.openTransactionLink} transactionsBTC={transactionsBTC} closeDrawer={this.closeDrawer} />}
+        content={
+          <PreferencesDrawer
+            closeDrawer={this.closeDrawer}
+            openTransactionLink={this.openTransactionLink}
+            transactionsBTC={transactionsBTC}
+            walletAddresses={addresses}
+          />
+        }
         ref={ref => this._drawer = ref}
         side="right"
         type="overlay"

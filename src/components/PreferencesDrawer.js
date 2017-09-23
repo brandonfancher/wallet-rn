@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import moment from 'moment';
 import { H2, StaticNavBar } from './';
 import CONSTANTS from '../constants';
+import parseTransactions from '../helpers/parseTransactions';
 
 
 export default class PreferencesDrawer extends React.Component {
@@ -12,6 +13,7 @@ export default class PreferencesDrawer extends React.Component {
     closeDrawer: PropTypes.func.isRequired,
     openTransactionLink: PropTypes.func.isRequired,
     transactionsBTC: PropTypes.array.isRequired,
+    walletAddresses: PropTypes.array.isRequired,
   };
 
   static defaultProps = {
@@ -19,24 +21,25 @@ export default class PreferencesDrawer extends React.Component {
   };
 
   render() {
-    const { closeDrawer, openTransactionLink, transactionsBTC } = this.props;
-    console.log('Transactions:', transactionsBTC);
+    const { closeDrawer, openTransactionLink, transactionsBTC, walletAddresses } = this.props;
+    const txs = parseTransactions(transactionsBTC, walletAddresses);
+
     return (
       <View style={styles.container}>
         <StaticNavBar label="Information" onBack={closeDrawer} />
         <ScrollView style={styles.scrollView}>
 
           <H2>Bitcoin Transactions</H2>
-          {transactionsBTC.map(tx => (
+          {txs.map(tx => (
             <View
-              key={`${tx.tx_hash}-${tx.value}`}
+              key={`${tx.txHash}-${tx.value}`}
               style={[styles.bodyGroup, styles.centerContents, styles.borderBottom]}
             >
-              <Text>Amount: {(tx.value / 100000000)} BTC</Text>
-              {tx.confirmed && <Text>Confirmed: {moment(tx.confirmed).format('llll')}</Text>}
-              <Text>Confirmations: {tx.confirmations}</Text>
+              <Text>Amount: {tx.io === 'INCOMING' ? '+' : '-'}{(tx.value / 100000000)} BTC</Text>
+              {tx.confirmed && <Text>{moment(tx.receivedTime).format('llll')}</Text>}
+              <Text>{tx.confirmed ? 'Confirmed' : `${tx.confirmations} Confirmations`}</Text>
               {/* <Text>Received From: {}</Text> */}
-              <Text onPress={() => openTransactionLink(`https://live.blockcypher.com/bcy/tx/${tx.tx_hash}/`)}>Transaction Details</Text>
+              <Text onPress={() => openTransactionLink(`https://live.blockcypher.com/bcy/tx/${tx.exploreUri}/`)}>Transaction Details</Text>
             </View>
           ))}
 
