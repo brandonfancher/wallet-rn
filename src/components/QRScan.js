@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StatusBar, StyleSheet, VibrationIOS, View } from 'react-native';
+import { StatusBar, StyleSheet, Text, VibrationIOS, View } from 'react-native';
 import PropTypes from 'prop-types';
 import Camera from 'react-native-camera';
 import DeviceInfo from 'react-native-device-info';
@@ -28,16 +28,15 @@ export default class QRCodeScreen extends Component {
   }
 
   _onPressCancel = () => {
-    requestAnimationFrame(() => {
-      this.props.navigator.pop();
-      if (this.props.onCancel) {
-        this.props.onCancel();
-      }
-    });
+    this.setState({ readyForScan: false });
+    if (this.props.onCancel) {
+      this.props.onCancel();
+    }
   }
 
   _onPressMock = () => {
-    const paymentDetails = `bitcoin:C29ZLvrz9WzBZ2MagUReu475Mr38N2CNza`;
+    const paymentDetails = 'bitcoin:C29ZLvrz9WzBZ2MagUReu475Mr38N2CNza?amount=12345.678';
+    // const paymentDetails = 'litecoin:3BTxuixRkhMQfTSqCLmq9Wn4jJ9H3dszhX';
     this._onSuccess(paymentDetails);
   }
 
@@ -90,12 +89,14 @@ export default class QRCodeScreen extends Component {
 
 const styles = StyleSheet.create({
   cameraContainer: {
-    flex: 1,
+    justifyContent: 'center',
+    height: 300,
   },
   camera: {
-    flex: 1,
     alignItems: 'center',
     marginBottom: 10,
+    height: 300,
+    width: 300,
   },
   rectangleContainer: {
     flex: 1,

@@ -98,7 +98,7 @@ export default class SlideView extends PureComponent {
     Linking.openURL(url).catch(err => console.error('An error occurred', err));
   }
 
-  sendTransaction = (toAddress) => {
+  sendTransaction = (amount, toAddress) => {
     const walletName = process.env.WALLET_NAME;
     const txPayload = {
       inputs: [{
@@ -106,7 +106,7 @@ export default class SlideView extends PureComponent {
       }],
       outputs: [{
         addresses: [toAddress],
-        value: 100001,
+        value: amount,
       }],
     };
 
@@ -169,7 +169,7 @@ export default class SlideView extends PureComponent {
             balanceBTC={balanceBTC}
             openDrawer={this.openDrawer}
             openTransactionLink={this.openTransactionLink}
-            sendTestTransaction={this.sendTransaction}
+            sendTransaction={this.sendTransaction}
             transactionsBTC={transactionsBTC}
             walletAddresses={addresses}
           />

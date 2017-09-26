@@ -1,9 +1,11 @@
 import React from 'react';
-import { AlertIOS, Dimensions, Linking, ScrollView, Text, View, StyleSheet } from 'react-native';
+import { AlertIOS, Dimensions, Linking, ScrollView, Text, TextInput, View, StyleSheet } from 'react-native';
 import PropTypes from 'prop-types';
 import QRCode from 'react-native-qrcode';
-// import Camera from 'react-native-camera';
 import moment from 'moment';
+import bitcoin from 'react-native-bitcoinjs-lib';
+import networks from './helpers/networks';
+import { toSatoshi } from './helpers/coin';
 import { AccentButton, CryptoIcon, H2, QRScan } from './components';
 const { height, width } = Dimensions.get('window');
 import CONSTANTS from './constants';
@@ -20,6 +22,7 @@ export default class BitcoinDetail extends React.Component {
     coin: PropTypes.string.isRequired,
     openDrawer: PropTypes.func.isRequired,
     openTransactionLink: PropTypes.func.isRequired,
+    sendTransaction: PropTypes.func.isRequired,
     transactionsBTC: PropTypes.array.isRequired,
     walletAddresses: PropTypes.array.isRequired,
   };
@@ -29,19 +32,48 @@ export default class BitcoinDetail extends React.Component {
   };
 
   state = {
+    amountToSend: '',
+    sendTo: '',
     scanMode: false,
   };
+
+  _handleAmountInput = (amount) => this.setState({ amountToSend: amount });
+  _handleSendToInput = (address) => this.setState({ sendTo: address });
 
   _onScanFail = (cb) => {
     AlertIOS.alert('Oops!', "We didn't quite get that. Check the QR code and try again.", cb);
   }
 
   _onScanSuccess = (paymentDetails) => {
-    this.setState({ scanMode: false }, AlertIOS.alert('Booyah!', paymentDetails));
+    // TODO: Run checks on the non-address parts of the QR reading.
+    const parsed = paymentDetails.split(/:|\?|=/);
+    const address = parsed[1];
+    const amount = parsed[3] || '0';
+
+    if (this.validateAddress(address)) {
+      this.setState({
+        amountToSend: amount,
+        scanMode: false,
+        sendTo: address,
+      });
+    } else {
+      AlertIOS.alert('Address not valid.');
+    }
   }
 
   _onScanCancel = () => {
     this.setState({ scanMode: false });
+  }
+
+  validateAddress = (address) => {
+    try {
+      bitcoin.address.fromBase58Check(address);
+      bitcoin.address.toOutputScript(address, networks.blockcypherTestChain);
+      return true;
+    } catch (e) {
+      console.log(e);
+      return false;
+    }
   }
 
   scanMode = () => {
@@ -49,14 +81,14 @@ export default class BitcoinDetail extends React.Component {
   }
 
   render() {
-    const { scanMode } = this.state;
+    const { amountToSend, scanMode, sendTo } = this.state;
     const {
       balanceBTC,
       colorScheme,
       coin,
       openDrawer,
       openTransactionLink,
-      sendTestTransaction,
+      sendTransaction,
       transactionsBTC,
       walletAddresses
     } = this.props;
@@ -79,8 +111,8 @@ export default class BitcoinDetail extends React.Component {
       >
         <View style={styles.sectionView}>
           <QRCode
-            bgColor="white"
-            fgColor={CONSTANTS.COLORSCHEMES[colorScheme].background}
+            fgColor="white"
+            bgColor="black"
             size={250}
             value={`bitcoin:${walletAddresses[0]}`}
           />
@@ -90,7 +122,6 @@ export default class BitcoinDetail extends React.Component {
         <View style={styles.sectionView}>
           <View style={{ flex: 1.9, justifyContent: 'center' }}>
             <CryptoIcon
-              onPress={() => sendTestTransaction('C29ZLvrz9WzBZ2MagUReu475Mr38N2CNza')}
               name="bitcoin-alt"
               size={82}
               color="white"
@@ -130,15 +161,43 @@ export default class BitcoinDetail extends React.Component {
 
         <View style={styles.sectionView}>
           <Text style={styles.placeholderText}>Send</Text>
-          <AccentButton label="Scan QR" color={colors.primary} onPress={this.scanMode} />
-          {scanMode && (
-            <QRScan
-              colorScheme={colorScheme}
-              onCancel={this._onScanCancel}
-              onFail={this._onScanFail}
-              onSuccess={this._onScanSuccess}
+          <View style={{ width: 300, height: 150 }}>
+            <TextInput
+              style={{ height: 40, borderColor: 'black', borderWidth: 1, backgroundColor: 'white' }}
+              onChangeText={this._handleAmountInput}
+              keyboardType="numeric"
+              placeholder="BTC Amount To Send"
+              returnKeyType="next"
+              value={amountToSend}
             />
-          )}
+            <TextInput
+              style={{ height: 40, borderColor: 'black', borderWidth: 1, backgroundColor: 'white' }}
+              onChangeText={this._handleSendToInput}
+              autoCorrect={false}
+              placeholder="Address"
+              returnKeyType="done"
+              value={sendTo}
+            />
+          </View>
+          {scanMode
+            ? <View>
+                <QRScan
+                  colorScheme={colorScheme}
+                  onCancel={this._onScanCancel}
+                  onFail={this._onScanFail}
+                  onSuccess={this._onScanSuccess}
+                />
+              </View>
+            : <AccentButton label="Scan QR" color={colors.primary} onPress={this.scanMode} />
+          }
+          {sendTo && amountToSend && parseFloat(amountToSend) > 0
+            ? <AccentButton
+                label="Send"
+                color={colors.primary}
+                onPress={() => sendTransaction(toSatoshi(amountToSend), sendTo)}
+              />
+            : null
+          }
         </View>
       </ScrollView>
     );

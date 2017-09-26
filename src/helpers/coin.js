@@ -19,3 +19,5 @@ export const generateWalletAddresses = (mnemonic, network) => {
   // console.log('ADDRESSES: ', addresses);
   return addresses;
 }
+
+export const toSatoshi = (amount) => amount * 100000000;
