@@ -33,6 +33,8 @@ export default class SlideView extends PureComponent {
     transactionsBTC: [],
     mnemonic: process.env.TEST_MNEMONIC ? process.env.MNEMONIC : '',
     addresses: [],
+    sending: false,
+    sendResult: null, // [null, 'success', 'fail']
   };
 
   componentWillMount = () => {
@@ -98,8 +100,11 @@ export default class SlideView extends PureComponent {
     Linking.openURL(url).catch(err => console.error('An error occurred', err));
   }
 
+  resetSendStatus = () => this.setState({ sendResult: null });
+
   sendTransaction = (amount, toAddress) => {
     const walletName = process.env.WALLET_NAME;
+    this.setState({ sending: true });
     const txPayload = {
       inputs: [{
         wallet_name: walletName,
@@ -110,14 +115,34 @@ export default class SlideView extends PureComponent {
       }],
     };
 
-    this.socket.emit('send-transaction::create', txPayload, (error, txToSign) => {
-      const signedTx = this.signTransaction(txToSign);
-      console.log('Signed Transaction: ', signedTx);
-      console.log(this.socket);
+    _onSendSuccess = (sentTx) => {
+      console.log('SEND SUCCESS: ', sentTx);
+      this.setState({ sending: false, sendResult: 'success' });
+    }
 
+    _onSendError = (error) => {
+      console.log('SEND ERROR: ', error);
+      this.setState({ sending: false, sendResult: 'fail' });
+    }
+
+    _sendSignedTx = (signedTx) => {
+      console.log('SENDING SIGNED TX: ', signedTx);
       this.socket.emit('send-transaction::create', signedTx, (error, sentTx) => {
-        console.log('Transaction Send Response: ', sentTx);
+        if (error) {
+          _onSendError(error);
+        } else {
+          _onSendSuccess(sentTx);
+        }
       });
+    }
+
+    this.socket.emit('send-transaction::create', txPayload, (error, txToSign) => {
+      if (error) {
+        _onSendError(error);
+      } else {
+        const signedTx = this.signTransaction(txToSign);
+        _sendSignedTx(signedTx);
+      }
     });
   }
 
@@ -146,7 +171,7 @@ export default class SlideView extends PureComponent {
   };
 
   _renderScene = ({ route }) => {
-    const { addresses, index, balanceBTC, transactionsBTC } = this.state;
+    const { addresses, index, balanceBTC, sending, sendResult, transactionsBTC } = this.state;
     switch (route.key) {
       case '1':
         return (
@@ -169,6 +194,9 @@ export default class SlideView extends PureComponent {
             balanceBTC={balanceBTC}
             openDrawer={this.openDrawer}
             openTransactionLink={this.openTransactionLink}
+            resetSendStatus={this.resetSendStatus}
+            sending={sending}
+            sendResult={sendResult}
             sendTransaction={this.sendTransaction}
             transactionsBTC={transactionsBTC}
             walletAddresses={addresses}

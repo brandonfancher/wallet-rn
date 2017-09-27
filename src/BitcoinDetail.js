@@ -22,6 +22,9 @@ export default class BitcoinDetail extends React.Component {
     coin: PropTypes.string.isRequired,
     openDrawer: PropTypes.func.isRequired,
     openTransactionLink: PropTypes.func.isRequired,
+    resetSendStatus: PropTypes.func.isRequired,
+    sending: PropTypes.bool.isRequired,
+    sendResult: PropTypes.string,
     sendTransaction: PropTypes.func.isRequired,
     transactionsBTC: PropTypes.array.isRequired,
     walletAddresses: PropTypes.array.isRequired,
@@ -76,25 +79,90 @@ export default class BitcoinDetail extends React.Component {
     }
   }
 
-  scanMode = () => {
+  setScanMode = () => {
     this.setState({ scanMode: true });
   }
 
-  render() {
+  renderSendScreen = () => {
     const { amountToSend, scanMode, sendTo } = this.state;
-    const {
-      balanceBTC,
-      colorScheme,
-      coin,
-      openDrawer,
-      openTransactionLink,
-      sendTransaction,
-      transactionsBTC,
-      walletAddresses
-    } = this.props;
+    const { colorScheme, sending, resetSendStatus, sendResult, sendTransaction, transactionsBTC, walletAddresses } = this.props;
 
     const colors = CONSTANTS.COLORSCHEMES[colorScheme];
-    const charBTC = '';
+
+    if (sending) {
+      return <Text style={styles.placeholderText}>Sending...</Text>;
+    } else if (sendResult === 'success') {
+      return (
+        <View>
+          <Text style={styles.placeholderText}>Send Successful</Text>
+          <AccentButton
+            label="Okay"
+            color={colors.primary}
+            onPress={resetSendStatus}
+          />
+        </View>
+      );
+    } else if (sendResult === 'fail') {
+      return (
+        <View>
+          <Text style={styles.placeholderText}>Send Failed</Text>
+          <AccentButton
+            label="Back"
+            color={colors.primary}
+            onPress={resetSendStatus}
+          />
+        </View>
+      );
+    } else {
+      return (
+        <View>
+          <Text style={styles.placeholderText}>Send</Text>
+          {scanMode
+            ? <View>
+                <QRScan
+                  colorScheme={colorScheme}
+                  onCancel={this._onScanCancel}
+                  onFail={this._onScanFail}
+                  onSuccess={this._onScanSuccess}
+                />
+              </View>
+            : <View style={{ width: 300, height: 150 }}>
+                <TextInput
+                  style={{ height: 40, borderColor: 'black', borderWidth: 1, backgroundColor: 'white' }}
+                  onChangeText={this._handleAmountInput}
+                  keyboardType="numeric"
+                  placeholder="BTC Amount To Send"
+                  returnKeyType="next"
+                  value={amountToSend}
+                />
+                <TextInput
+                  style={{ height: 40, borderColor: 'black', borderWidth: 1, backgroundColor: 'white' }}
+                  onChangeText={this._handleSendToInput}
+                  autoCorrect={false}
+                  placeholder="Address"
+                  returnKeyType="done"
+                  value={sendTo}
+                />
+                <AccentButton label="Scan QR" color={colors.primary} onPress={this.setScanMode} />
+              </View>
+          }
+          {sendTo && amountToSend && parseFloat(amountToSend) > 0
+            ? <AccentButton
+                label="Send"
+                color={colors.primary}
+                onPress={() => sendTransaction(toSatoshi(amountToSend), sendTo)}
+              />
+            : null
+          }
+        </View>
+      );
+    }
+  }
+
+  render() {
+    const { balanceBTC, colorScheme, openDrawer, openTransactionLink, transactionsBTC, walletAddresses } = this.props;
+
+    const colors = CONSTANTS.COLORSCHEMES[colorScheme];
     const numRecentTransactions = 3;
     const txs = parseTransactions(transactionsBTC, walletAddresses);
 
@@ -160,44 +228,7 @@ export default class BitcoinDetail extends React.Component {
         </View>
 
         <View style={styles.sectionView}>
-          <Text style={styles.placeholderText}>Send</Text>
-          <View style={{ width: 300, height: 150 }}>
-            <TextInput
-              style={{ height: 40, borderColor: 'black', borderWidth: 1, backgroundColor: 'white' }}
-              onChangeText={this._handleAmountInput}
-              keyboardType="numeric"
-              placeholder="BTC Amount To Send"
-              returnKeyType="next"
-              value={amountToSend}
-            />
-            <TextInput
-              style={{ height: 40, borderColor: 'black', borderWidth: 1, backgroundColor: 'white' }}
-              onChangeText={this._handleSendToInput}
-              autoCorrect={false}
-              placeholder="Address"
-              returnKeyType="done"
-              value={sendTo}
-            />
-          </View>
-          {scanMode
-            ? <View>
-                <QRScan
-                  colorScheme={colorScheme}
-                  onCancel={this._onScanCancel}
-                  onFail={this._onScanFail}
-                  onSuccess={this._onScanSuccess}
-                />
-              </View>
-            : <AccentButton label="Scan QR" color={colors.primary} onPress={this.scanMode} />
-          }
-          {sendTo && amountToSend && parseFloat(amountToSend) > 0
-            ? <AccentButton
-                label="Send"
-                color={colors.primary}
-                onPress={() => sendTransaction(toSatoshi(amountToSend), sendTo)}
-              />
-            : null
-          }
+          {this.renderSendScreen()}
         </View>
       </ScrollView>
     );
@@ -213,6 +244,7 @@ const styles = StyleSheet.create({
   placeholderText: {
     color: 'white',
     fontSize: 32,
+    textAlign: 'center',
   },
   balanceText: {
     color: 'white',
