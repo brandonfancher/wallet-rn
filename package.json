@@ -33,6 +33,7 @@
     "react-native-crypto": "2.0.2",
     "react-native-device-info": "0.11.0",
     "react-native-drawer": "2.3.0",
+    "react-native-keychain": "2.0.0-rc",
     "react-native-qrcode": "0.2.6",
     "react-native-randombytes": "git+https://git@github.com/brandonfancher/react-native-randombytes.git",
     "react-native-tab-view": "0.0.68",

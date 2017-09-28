@@ -1,6 +1,7 @@
 import React from 'react';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import PropTypes from 'prop-types';
+import * as Keychain from 'react-native-keychain';
 import moment from 'moment';
 import { H2, StaticNavBar } from './';
 import CONSTANTS from '../constants';
@@ -19,6 +20,24 @@ export default class PreferencesDrawer extends React.Component {
   static defaultProps = {
     transactionsBTC: [],
   };
+
+  persistMnemonic = () => {
+    Keychain
+      .setGenericPassword('mnemonic', 'Brandon')
+      .then(function() {
+        console.log('Credentials saved successfully!');
+      });
+  }
+
+  recallMnemonic = () => {
+    Keychain
+      .getGenericPassword()
+      .then(function(credentials) {
+        console.log('Credentials successfully loaded for user ' + credentials.password);
+      }).catch(function(error) {
+        console.log('Keychain couldn\'t be accessed! Maybe no value set?', error);
+      });
+  }
 
   render() {
     const { closeDrawer, openTransactionLink, transactionsBTC, walletAddresses } = this.props;
@@ -49,6 +68,16 @@ export default class PreferencesDrawer extends React.Component {
               {process.env.TEST_MNEMONIC ? process.env.MNEMONIC : ''}
             </Text>
           </View>
+          <TouchableOpacity style={[styles.bodyGroup, styles.centerContents]} onPress={this.persistMnemonic}>
+            <Text style={[styles.p, styles.textCenter]}>
+              Set to "Brandon"
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={[styles.bodyGroup, styles.centerContents]} onPress={this.recallMnemonic}>
+            <Text style={[styles.p, styles.textCenter]}>
+              Recall Mnemonic
+            </Text>
+          </TouchableOpacity>
 
           <H2>Development</H2>
           <View style={[styles.bodyGroup, styles.contents]}>
