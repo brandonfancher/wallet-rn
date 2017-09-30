@@ -76,7 +76,8 @@ export default class App extends PureComponent {
     this.initializeWallet();
   }
 
-  initializeWallet = async () => {
+  initializeWallet = async (restoreMnemonic) => {
+    console.log('restoreMnemonic: ', restoreMnemonic);
     // Recall walletSettings (addresses, mnemonic, walletUUID) and persist to app state, if present.
     const { mnemonic, walletUUID } = await this.recallWalletSettings();
     console.log('Wallet Mnemonic: ', mnemonic);
@@ -86,15 +87,19 @@ export default class App extends PureComponent {
 
     // If they're not there, create a mnemonic and walletUUID, derive addresses from the mnemonic
     // and persist all of that to the keychain and app state. Create the new wallet on BlockCypher.
-    if (!mnemonic || !walletUUID) {
-      const generatedMnemonic = await generateMnemonic();
-      const persistedSettings = await this.persistWalletSettings(generatedMnemonic);
+    if (restoreMnemonic || !mnemonic || !walletUUID) {
+      let generatedMnemonic;
+      if (!restoreMnemonic) {
+        generatedMnemonic = await generateMnemonic();
+      }
+      const persistedSettings = await this.persistWalletSettings(generatedMnemonic || restoreMnemonic);
       newlyCreatedWallet = await this.createNewWallet(persistedSettings);
       console.log('New Wallet: ', newlyCreatedWallet);
     }
 
     // Get and persist wallet
-    const walletName = walletUUID || newlyCreatedWallet.name;
+    // const walletName = walletUUID || newlyCreatedWallet.name;
+    const walletName = newlyCreatedWallet && newlyCreatedWallet.name || walletUUID;
     this.getWalletInfo(walletName, 'full', (message) => {
       console.log('Wallet Info: ', message);
       this.setState({
@@ -323,10 +328,10 @@ export default class App extends PureComponent {
         content={
           <PreferencesDrawer
             closeDrawer={this.closeDrawer}
+            initializeWallet={this.initializeWallet}
             invalidMnemonic={invalidMnemonic}
             mnemonic={mnemonic}
             openTransactionLink={this.openTransactionLink}
-            persistWalletSettings={this.persistWalletSettings}
             resetWalletInfo={this.resetWalletInfo}
             transactionsBTC={transactionsBTC}
             walletAddresses={addresses}

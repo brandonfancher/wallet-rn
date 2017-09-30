@@ -11,10 +11,10 @@ export default class PreferencesDrawer extends React.Component {
 
   static propTypes = {
     closeDrawer: PropTypes.func.isRequired,
+    initializeWallet: PropTypes.func.isRequired,
     invalidMnemonic: PropTypes.bool,
     mnemonic: PropTypes.string,
     openTransactionLink: PropTypes.func.isRequired,
-    persistWalletSettings: PropTypes.func.isRequired,
     resetWalletInfo: PropTypes.func.isRequired,
     transactionsBTC: PropTypes.array.isRequired,
     walletAddresses: PropTypes.array.isRequired,
@@ -28,7 +28,7 @@ export default class PreferencesDrawer extends React.Component {
   promptForMnemonic = () => {
     AlertIOS.prompt('Enter Mnemonic', null, (text) => {
       const trimmedInput = text.trim();
-      this.props.persistWalletSettings(trimmedInput);
+      this.props.initializeWallet(trimmedInput);
     });
   }
 

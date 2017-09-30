@@ -1,9 +1,15 @@
 # wallet-rn
 
 ## Tasks
+* On restore, register new addresses with websocket as listeners...and new webhooks.
 * Fix production build bug annotated in `config/globals.js`.
-* Store addresses, keys, etc. Send and receive transactions.
-* Fork `react-native-bitcoinjs-lib` and `react-native-bip39` myself. I will control it (more secure) and I can update `bitcoinjs-lib` to support things like Segwit.
+* Move as much of that initialization stuff out of `App.js`
+* Document initialization flows
+  * New wallet initialization
+  * Wallet startup for already-initialized wallet
+  * Restore initialization
+* Fork `react-native-bitcoinjs-lib` and `react-native-bip39` myself? I will control it (more secure) and I can update `bitcoinjs-lib` to support things like Segwit.
+* Update to main `react-native-randombytes` repo
 * Support multiple coins
   * [x] bitcoin
   * [x] litecoin
