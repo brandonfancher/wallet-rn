@@ -17,7 +17,7 @@ import parseTransactions from './helpers/parseTransactions';
 export default class BitcoinDetail extends React.Component {
 
   static propTypes = {
-    balanceBTC: PropTypes.number.isRequired,
+    balanceBTC: PropTypes.number,
     colorScheme: PropTypes.string.isRequired,
     coin: PropTypes.string.isRequired,
     openDrawer: PropTypes.func.isRequired,
@@ -31,6 +31,7 @@ export default class BitcoinDetail extends React.Component {
   };
 
   static defaultProps = {
+    balanceBTC: 0,
     transactionsBTC: [],
   };
 

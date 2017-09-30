@@ -1,7 +1,6 @@
 import React from 'react';
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { AlertIOS, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import PropTypes from 'prop-types';
-import * as Keychain from 'react-native-keychain';
 import moment from 'moment';
 import { H2, StaticNavBar } from './';
 import CONSTANTS from '../constants';
@@ -12,35 +11,37 @@ export default class PreferencesDrawer extends React.Component {
 
   static propTypes = {
     closeDrawer: PropTypes.func.isRequired,
+    invalidMnemonic: PropTypes.bool,
+    mnemonic: PropTypes.string,
     openTransactionLink: PropTypes.func.isRequired,
+    persistWalletSettings: PropTypes.func.isRequired,
+    resetWalletInfo: PropTypes.func.isRequired,
     transactionsBTC: PropTypes.array.isRequired,
     walletAddresses: PropTypes.array.isRequired,
+    walletUUID: PropTypes.string,
   };
 
   static defaultProps = {
     transactionsBTC: [],
   };
 
-  persistMnemonic = () => {
-    Keychain
-      .setGenericPassword('mnemonic', 'Brandon')
-      .then(function() {
-        console.log('Credentials saved successfully!');
-      });
-  }
-
-  recallMnemonic = () => {
-    Keychain
-      .getGenericPassword()
-      .then(function(credentials) {
-        console.log('Credentials successfully loaded for user ' + credentials.password);
-      }).catch(function(error) {
-        console.log('Keychain couldn\'t be accessed! Maybe no value set?', error);
-      });
+  promptForMnemonic = () => {
+    AlertIOS.prompt('Enter Mnemonic', null, (text) => {
+      const trimmedInput = text.trim();
+      this.props.persistWalletSettings(trimmedInput);
+    });
   }
 
   render() {
-    const { closeDrawer, openTransactionLink, transactionsBTC, walletAddresses } = this.props;
+    const {
+      closeDrawer,
+      mnemonic,
+      openTransactionLink,
+      resetWalletInfo,
+      transactionsBTC,
+      walletAddresses,
+      walletUUID
+    } = this.props;
     const txs = parseTransactions(transactionsBTC, walletAddresses);
 
     return (
@@ -58,34 +59,31 @@ export default class PreferencesDrawer extends React.Component {
               {tx.confirmed && <Text>{moment(tx.receivedTime).format('llll')}</Text>}
               <Text>{tx.confirmed ? 'Confirmed' : `${tx.confirmations} Confirmations`}</Text>
               {/* <Text>Received From: {}</Text> */}
-              <Text onPress={() => openTransactionLink(`https://live.blockcypher.com/bcy/tx/${tx.exploreUri}/`)}>Transaction Details</Text>
+              <Text onPress={() => openTransactionLink(`https://live.blockcypher.com/bcy/tx/${tx.exploreUri}/`)}>
+                Transaction Details
+              </Text>
             </View>
           ))}
 
           <H2>Backup Phrase</H2>
           <View style={[styles.bodyGroup, styles.centerContents]}>
-            <Text style={[styles.p, styles.textCenter]}>
-              {process.env.TEST_MNEMONIC ? process.env.MNEMONIC : ''}
-            </Text>
+            <Text style={[styles.p, styles.textCenter]}>{mnemonic}</Text>
           </View>
-          <TouchableOpacity style={[styles.bodyGroup, styles.centerContents]} onPress={this.persistMnemonic}>
-            <Text style={[styles.p, styles.textCenter]}>
-              Set to "Brandon"
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={[styles.bodyGroup, styles.centerContents]} onPress={this.recallMnemonic}>
-            <Text style={[styles.p, styles.textCenter]}>
-              Recall Mnemonic
-            </Text>
+          <TouchableOpacity style={[styles.bodyGroup, styles.centerContents]} onPress={this.promptForMnemonic}>
+            <Text style={[styles.p, styles.textCenter]}>Restore Wallet from Mnemonic</Text>
           </TouchableOpacity>
 
           <H2>Development</H2>
           <View style={[styles.bodyGroup, styles.contents]}>
             <Text style={styles.p}>
-              <Text style={styles.bold}>Wallet Name: </Text>
-              <Text>Test</Text>
+              <Text>{walletUUID}</Text>
             </Text>
           </View>
+          <TouchableOpacity style={[styles.bodyGroup, styles.contents]} onPress={resetWalletInfo}>
+            <Text style={styles.p}>
+              <Text>Reset Wallet</Text>
+            </Text>
+          </TouchableOpacity>
         </ScrollView>
       </View>
     );

@@ -46,3 +46,19 @@ Instead of `babel-plugin-rewrite-require`, I'm using the more popular `babel-plu
 
 ## Before Going to Production
 * Ensure any dev tunneling changes are reverted (especially App Transport Security Settings exceptions.)
+
+## Onboarding Flow
+
+```yaml
+state:
+  initialized: false
+  walletUUID: null
+  mnemonic: null
+
+componentWillMount:
+  set up websocket and connect
+
+componentDidMount:
+  (loading-wallet screen renders)
+  initialize: get or generate: walletUUID, mnemonic, addresses
+```
