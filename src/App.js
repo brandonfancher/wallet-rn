@@ -30,8 +30,9 @@ export default class App extends PureComponent {
 
   state = {
     addresses: [],
-    index: 1,
     balanceBTC: 0,
+    connectionEstablished: false,
+    index: 1,
     initialized: false,
     invalidMnemonic: false,
     mnemonic: '',
@@ -47,7 +48,7 @@ export default class App extends PureComponent {
   };
 
   componentWillMount = () => {
-    const { addresses } = this.state;
+    const { connectionEstablished } = this.state;
     const options = { transports: ['websocket'], pingTimeout: 3000, pingInterval: 5000 };
     console.log('API URL: ', process.env.API_URL);
     this.socket = io(process.env.API_URL, options);
@@ -58,22 +59,31 @@ export default class App extends PureComponent {
 
     this.socket.on('connect', () => {
       console.info('Connecting socket.');
-      // This event should give the server something unique so that the server will know which events
-      // to send to this particular connection. E.g., the wallet name, an array of addresses to listen
-      // for transactions on, etc. That way, the server can filter events for this connected client.
-      // Probably a UUID that serves as the wallet name and is stored in some persisted local storage.
-      // I don't think a transaction includes wallet name when it comes through, though. Hence addreses.
-      if (addresses) {
-        this.socket.emit('registerSocket', addresses, (error, message) => {
-          console.info('Registering device with the following addresses: ', addresses);
-          console.log('Response: ', message);
-        });
-      }
-    });
+      if (!connectionEstablished) this.setState({ connectionEstablished: true });
+      this.registerAddressListeners();
+    })
   }
 
-  componentDidMount = () => {
-    this.initializeWallet();
+  componentDidUpdate = (prevProps, prevState) => {
+    const { connectionEstablished } = this.state;
+    if (!prevState.connectionEstablished && connectionEstablished) {
+      this.initializeWallet();
+    }
+  }
+
+  registerAddressListeners = () => {
+    const { addresses } = this.state;
+    // This event should give the server something unique so that the server will know which events
+    // to send to this particular connection. E.g., the wallet name, an array of addresses to listen
+    // for transactions on, etc. That way, the server can filter events for this connected client.
+    // Probably a UUID that serves as the wallet name and is stored in some persisted local storage.
+    // I don't think a transaction includes wallet name when it comes through, though. Hence addreses.
+    if (addresses) {
+      this.socket.emit('registerSocket', addresses, (error, message) => {
+        console.info('Registering device with the following addresses: ', addresses);
+        console.log('Response: ', message);
+      });
+    }
   }
 
   initializeWallet = async (restoreMnemonic) => {
