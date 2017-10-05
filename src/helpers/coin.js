@@ -6,8 +6,13 @@ import { randomBytes } from 'react-native-randombytes';
 
 const generateAddressFromSeed = (mnemonic, path, network = process.env.ASSET_NETWORK) => {
   const seed = bip39.mnemonicToSeed(mnemonic);
+  // console.error('TEST');
+  // console.error('seed: ', seed);
+  // console.error('process: ', process);
   const root = bitcoin.HDNode.fromSeedHex(seed, network);
   const xpub = root.neutered().toBase58();
+  // console.error('8');
+  // console.error('xpub: ', xpub);
   // console.log('xpub: ', xpub);
   return root.derivePath(path).getAddress();
 }
@@ -21,7 +26,12 @@ export const generateXpub = (mnemonic, network = process.env.ASSET_NETWORK) => {
 
 export const generateWalletAddresses = (mnemonic, network) => {
   const addresses = [];
-  for (const i = 0; i <= 32; i++) {
+
+  // for (const i = 0; i <= 32; i++) {
+  // TODO: For some reason here, these generate very slowly in production. And 32 stalls it out.
+  // Figure out why.
+  for (const i = 0; i <= 8; i++) {
+    console.error(`Generating address ${i}`);
     const address = generateAddressFromSeed(mnemonic, `m/${i}`, network);
     addresses.push(address);
   }

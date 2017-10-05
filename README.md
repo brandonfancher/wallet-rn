@@ -2,7 +2,6 @@
 
 ## Tasks
 * On restore, register new addresses with websocket as listeners...and new webhooks.
-* Fix production build bug annotated in `config/globals.js`.
 * Move as much of that initialization stuff out of `App.js`
 * Document initialization flows
   * New wallet initialization
@@ -46,6 +45,13 @@ Instead of `babel-plugin-rewrite-require`, I'm using the more popular `babel-plu
 #### BIP32 and Other Cryptocurrency Functions
 * Using [`react-native-bitcoinjs-lib`](https://github.com/novalabio/react-native-bitcoinjs-lib), a fork of [`bitcoinjs`](https://github.com/bitcoinjs/bitcoinjs-lib). Will likely fork the latter myself for security reasons and to get access to the latest features, like Segwit.
 
+### Building for Production
+So, there are more catches: https://github.com/bitcoinjs/bitcoinjs-lib#browser
+* Buffer Version: If we run into issues with `bitcoinjs-lib` (especially on iOS 10), we may need `buffer@5.0.5` or greater.
+* React Native will mangle things it shouldn't when uglifying for Release:
+  * [React Native Issue re: Minification/Uglify Mangling](https://github.com/facebook/react-native/issues/9711)
+  * Current Location: `./node_modules/react-native/packager/src/JSTransformer/worker/minify.js` add `mangle: false`
+
 ## Other Documentation
 * [Original React Native README](/docs/react-native.md)
 * [Tunneling to Overcome Dev Network Issues](/docs/tunneling.md)
@@ -68,3 +74,18 @@ componentDidMount:
   (loading-wallet screen renders)
   initialize: get or generate: walletUUID, mnemonic, addresses
 ```
+
+# bcoin
+
+## Notes
+
+### Derivation Paths for Testnet
+
+See: https://iancoleman.github.io/bip39/
+
+* Receive (Main) Addresses: `m/44'/1'/0'/0`
+* Change Addresses: `m/44'/1'/0'/1`
+
+### TestNet Backup
+
+`nose hello extra summer elder capital marine term glide choice plate release`

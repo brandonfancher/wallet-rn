@@ -50,12 +50,14 @@ export default class App extends PureComponent {
   componentWillMount = () => {
     const { connectionEstablished } = this.state;
     const options = { transports: ['websocket'], pingTimeout: 3000, pingInterval: 5000 };
-    console.log('API URL: ', process.env.API_URL);
+    console.error('API URL: ', process.env.API_URL);
     this.socket = io(process.env.API_URL, options);
 
     this.app = feathers()
       .configure(socketio(this.socket))
       .configure(hooks());
+
+    // console.error('Socket: ', this.socket);
 
     this.socket.on('connect', () => {
       console.info('Connecting socket.');
@@ -81,17 +83,17 @@ export default class App extends PureComponent {
     if (addresses) {
       this.socket.emit('registerSocket', addresses, (error, message) => {
         console.info('Registering device with the following addresses: ', addresses);
-        console.log('Response: ', message);
+        console.error('Response: ', message);
       });
     }
   }
 
   initializeWallet = async (restoreMnemonic) => {
-    console.log('restoreMnemonic: ', restoreMnemonic);
+    console.error('restoreMnemonic: ', restoreMnemonic);
     // Recall walletSettings (addresses, mnemonic, walletUUID) and persist to app state, if present.
     const { mnemonic, walletUUID } = await this.recallWalletSettings();
-    console.log('Wallet Mnemonic: ', mnemonic);
-    console.log('Wallet UUID: ', walletUUID);
+    console.error('Wallet Mnemonic: ', mnemonic);
+    console.error('Wallet UUID: ', walletUUID);
 
     let newlyCreatedWallet;
 
@@ -101,17 +103,18 @@ export default class App extends PureComponent {
       let generatedMnemonic;
       if (!restoreMnemonic) {
         generatedMnemonic = await generateMnemonic();
+        console.error(`generatedMnemonic: ${generatedMnemonic}`);
       }
       const persistedSettings = await this.persistWalletSettings(generatedMnemonic || restoreMnemonic);
       newlyCreatedWallet = await this.createNewWallet(persistedSettings);
-      console.log('New Wallet: ', newlyCreatedWallet);
+      console.error('New Wallet: ', newlyCreatedWallet);
     }
 
     // Get and persist wallet
     // const walletName = walletUUID || newlyCreatedWallet.name;
     const walletName = newlyCreatedWallet && newlyCreatedWallet.name || walletUUID;
     this.getWalletInfo(walletName, 'full', (message) => {
-      console.log('Wallet Info: ', message);
+      console.error('Wallet Info: ', message);
       this.setState({
         balanceBTC: message.balance,
         transactionsBTC: message.txs,
@@ -137,7 +140,7 @@ export default class App extends PureComponent {
       this.setState({ addresses, mnemonic, walletUUID });
       return { walletUUID, mnemonic };
     } catch (e) {
-      console.log('Error while recalling mnemonic: ', e);
+      console.error('Error while recalling mnemonic: ', e);
       return { walletUUID: null, mnemonic: null };
     }
   }
@@ -158,16 +161,15 @@ export default class App extends PureComponent {
       await Keychain.setGenericPassword(walletUUID, mnemonic);
       const addresses = generateWalletAddresses(mnemonic);
       this.setState({ addresses, invalidMnemonic, mnemonic, walletUUID });
-      console.log('Mnemonic saved successfully!');
+      console.error('Mnemonic saved successfully!');
       return { mnemonic, walletUUID };
     } catch (e) {
-      console.log('Error while persisting mnemonic: ', e);
+      console.error('Error while persisting mnemonic: ', e);
     }
   }
 
   getWalletInfo = (walletUUID, detail, cb) => {
-    console.log('Getting wallet info for wallet ', walletUUID);
-    // TODO: Won't take UUID...even with dashes removed. Too long. Crytpic message.
+    console.error('Getting wallet info for wallet ', walletUUID);
     this.socket.emit('hd-wallet::get', walletUUID, { tx_detail: detail }, (error, message) => {
       if (error) {
         console.error('Error getting wallet info: ', error);
@@ -181,7 +183,7 @@ export default class App extends PureComponent {
     Keychain
       .resetGenericPassword()
       .then(function() {
-        console.log('Wallet info successfully deleted.');
+        console.error('Wallet info successfully deleted.');
       });
   }
 
@@ -205,17 +207,17 @@ export default class App extends PureComponent {
     };
 
     _onSendSuccess = (sentTx) => {
-      console.log('SEND SUCCESS: ', sentTx);
+      console.error('SEND SUCCESS: ', sentTx);
       this.setState({ sending: false, sendResult: 'success' });
     }
 
     _onSendError = (error) => {
-      console.log('SEND ERROR: ', error);
+      console.error('SEND ERROR: ', error);
       this.setState({ sending: false, sendResult: 'fail' });
     }
 
     _sendSignedTx = (signedTx) => {
-      console.log('SENDING SIGNED TX: ', signedTx);
+      console.error('SENDING SIGNED TX: ', signedTx);
       this.socket.emit('send-transaction::create', signedTx, (error, sentTx) => {
         if (error) {
           _onSendError(error);

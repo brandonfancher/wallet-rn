@@ -3,10 +3,9 @@
 // Inject node globals into React Native global scope.
 global.Buffer = require('buffer').Buffer;
 global.process = require('process');
+// const crypto = require('crypto');
 
-// BUG: This next line errors out when building in Production, preventing build entirely. Do we even need it?
-// https://github.com/babel/babel.github.io/issues/847
-process.env.NODE_ENV = __DEV__ ? 'development' : 'production';
+process.env['NODE_ENV'] = __DEV__ ? 'development' : 'production';
 
 process.browser = false;
 process.version = 'v8.1.4';
@@ -22,6 +21,9 @@ if (typeof localStorage !== 'undefined') {
 
 // Polyfill crypto.getRandomValues() with randomBytes.
 // import { randomBytes } from 'react-native-randombytes';
+// global.crypto = { ...crypto, getRandomValues: (byteArray) => crypto.randomBytes(byteArray.length)};
+// console.error(crypto);
+// console.error(global.crypto);
 // global.crypto = {
 //   getRandomValues(byteArray) {
 //     const strength = byteArray.length;
